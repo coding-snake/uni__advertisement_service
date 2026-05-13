@@ -1,6 +1,6 @@
 <?php
 /**
- * Task fixtures.
+ * Ad fixtures.
  */
 
 namespace App\DataFixtures;
@@ -8,7 +8,7 @@ namespace App\DataFixtures;
 use App\Entity\Ad;
 
 /**
- * Class TaskFixtures.
+ * Class AdFixtures.
  */
 
     /**
@@ -16,15 +16,14 @@ use App\Entity\Ad;
      *
      * @param ObjectManager $manager Persistence object manager
      */
-    class AdFixtures extends AbstracyBaseFixtures
+    class AdFixtures extends AbstractBaseFixtures
+{
+    /**
+     * Load data.
+     */
+    public function loadData(): void
     {
-        /**
-         * Load data.
-         */
-
-        public function loadData(): void
-        {
-        for ($i = 0; $i < 10; ++$i) {
+        for ($i = 0; $i < 100; ++$i) {
             $ad = new Ad();
             $ad->setName($this->faker->sentence);
             $ad->setContent($this->faker->sentence);
@@ -34,9 +33,9 @@ use App\Entity\Ad;
             $ad->setUpdatedAt(
                 \DateTimeImmutable::createFromMutable($this->faker->dateTimeBetween('-100 days', '-1 days'))
             );
-            $manager->persist($ad);
+            $this->manager->persist($ad);
         }
 
-        $manager->flush();
+        $this->manager->flush();
     }
 }

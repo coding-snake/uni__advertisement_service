@@ -18,11 +18,11 @@ use Knp\Component\Pager\PaginatorInterface;
 #[Route('/ad')]
 class AdController extends AbstractController
 {
-    /**
+/**
      * Index action.
      *
      * @param Request            $request        HTTP Request
-     * @param AdRepository     $ad_repository Ad repository
+     * @param AdRepository     $adRepository ad repository
      * @param PaginatorInterface $paginator      Paginator
      *
      * @return Response HTTP response
@@ -31,26 +31,19 @@ class AdController extends AbstractController
         name: 'ad_index',
         methods: ['GET']
     )]
-    public function index(AdRepository $ad_repository, PaginatorInterface $paginator, #[MapQueryParameter] int $page = 1): Response
+    public function index(Request $request, AdRepository $adRepository, PaginatorInterface $paginator): Response
     {
-        $count = $ad_repository->count([]);
-
-dd($count);
         $pagination = $paginator->paginate(
-            $ad_repository->queryAll(),
-            $page,
+            $adRepository->queryAll(),
+            $request->query->getInt('page', 1),
             AdRepository::PAGINATOR_ITEMS_PER_PAGE,
             [
-                'sortFieldAllowList' => ['ad.id', 'ad.created_at', 'ad.updated_at', 'ad.name'],
-                'defaultSortFieldName' => 'ad.updated_at',
+                'sortFieldAllowList' => ['ad.id', 'ad.createdAt', 'ad.updatedAt', 'ad.name'],
+                'defaultSortFieldName' => 'ad.updatedAt',
                 'defaultSortDirection' => 'desc',
             ]
         );
 
-        # if (count($pagination) === 0) {
-        #     throw new \Exception('Pagination is empty');
-        # }
-    
         return $this->render('ad/index.html.twig', ['pagination' => $pagination]);
     }
 

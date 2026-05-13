@@ -1,54 +1,28 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {% if ad is defined and ad|length %}
-        {{'label.view_ad'}}
-    {% else %}
-        {{'label.ad_does_not_exist'}}
-    {% endif %}
+    {{ 'title.ad_details'|trans({'%id%': ad.id|default('')}) }}
 {% endblock %}
 
 {% block body %}
-    {% if pagination is defined and pagination.items|length %}
-        <h1>{{'label.ad_view'|trans}}</h1>
+        <h1>{{ 'title.ad_details'|trans({'%id%': ad.id|default('')}) }}</h1>
 
-        <div class="navigation text-center">
-            {{ knp_pagination_render(pagination) }}
-        </div>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'ad.id') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.created_at'|trans, 'ad.created_at') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.updated_at'|trans, 'ad.updated_at') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'ad.name') }}</th>
-                <th>{{ 'label.actions'|trans }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for ad in pagination.items %}
-                <tr>
-                    <td>{{ ad.id }}</td>
-                    <td>{{ ad.created_at|date('Y/m/d') }}</td>
-                    <td>{{ ad.updated_at|date('Y/m/d') }}</td>
-                    <td>{{ ad.name }}</td>
-                    <td>
-                        <a href="{{ url('ad', {id: ad.id}) }}" title="{{ 'action.view'|trans }}">
-                            {{ 'action.view'|trans }}
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        <div class="navigation text-center">
-            {{ knp_pagination_render(pagination) }}
-        </div>
-
+        {% if ad is defined and ad|length %}
+        <dl class="dl-horizontal">
+            <dt>{{ 'label.id'|trans }}</dt>
+            <dd>{{ ad.id }}</dd>
+            <dt>{{ 'label.createdAt'|trans }}</dt>
+            <dd>{{ ad.createdAt|date('Y/m/d') }}</dd>
+            <dt>{{ 'label.updatedAt'|trans }}</dt>
+            <dd>{{ ad.updatedAt|date('Y/m/d') }}</dd>
+            <dt>{{ 'label.name'|trans }}</dt>
+            <dd>{{  ad.name }}</dd>
+            <dt>{{ 'label.content'|trans }}</dt>
+            <dd>{{  ad.content }}</dd>
+        </dl>
     {% else %}
         <p>
-            {{ 'message.empty_list'|trans }}
+            {{ 'message.ad_not_found'|trans }}
         </p>
     {% endif %}
 

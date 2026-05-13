@@ -21,7 +21,7 @@ class AdRepository extends ServiceEntityRepository
      *
      * @var int
      */
-    public const PAGINATOR_ITEMS_PER_PAGE = 3;
+    public const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * Constructor.
