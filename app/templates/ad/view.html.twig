@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% if ad is defined and ad|length %}
+        {{'label.view_ad'}}
+    {% else %}
+        {{'label.ad_does_not_exist'}}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% if pagination is defined and pagination.items|length %}
+        <h1>{{'label.ad_view'|trans}}</h1>
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'ad.id') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.created_at'|trans, 'ad.created_at') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.updated_at'|trans, 'ad.updated_at') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'ad.name') }}</th>
+                <th>{{ 'label.actions'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ad in pagination.items %}
+                <tr>
+                    <td>{{ ad.id }}</td>
+                    <td>{{ ad.created_at|date('Y/m/d') }}</td>
+                    <td>{{ ad.updated_at|date('Y/m/d') }}</td>
+                    <td>{{ ad.name }}</td>
+                    <td>
+                        <a href="{{ url('ad', {id: ad.id}) }}" title="{{ 'action.view'|trans }}">
+                            {{ 'action.view'|trans }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+    {% else %}
+        <p>
+            {{ 'message.empty_list'|trans }}
+        </p>
+    {% endif %}
+
+    <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('ad_index') }}'">
+        <img src="{{ asset('images/arrow-return-left.svg') }}" alt="View" width="30" height="24">
+        {{'action.go_back_to_ads'|trans}}
+    </button>
+
+
+{% endblock %}
