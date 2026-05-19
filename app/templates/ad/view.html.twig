@@ -17,6 +17,8 @@
             <dd>{{ ad.updatedAt|date('Y/m/d') }}</dd>
             <dt>{{ 'label.name'|trans }}</dt>
             <dd>{{  ad.name }}</dd>
+            <dt>{{ 'label.topic'|trans }}</dt>
+            <dd>{{  ad.topic.name }}</dd>
             <dt>{{ 'label.content'|trans }}</dt>
             <dd>{{  ad.content }}</dd>
         </dl>
