@@ -5,12 +5,13 @@
 
 namespace App\Controller;
 
-use App\Repository\AdRepository;
+use App\Entity\Ad;
+use App\Service\AdService;
+use App\Service\AdServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * Class AdController.
@@ -18,42 +19,46 @@ use Knp\Component\Pager\PaginatorInterface;
 #[Route('/ads')]
 class AdController extends AbstractController
 {
+    /**
+     * Constructor.
+     */
+    public function __construct(private readonly AdServiceInterface $adService)
+    {
+    }
 
+    /**
+     * Index action.
+     *
+     * @param int $page Page number
+     *
+     * @return Response HTTP response
+     */
     #[Route(
         name: 'ad_index',
         methods: ['GET']
     )]
-    public function index(Request $request, AdRepository $adRepository, PaginatorInterface $paginator): Response
+    public function index(#[MapQueryParameter] int $page = 1): Response
     {
-        $pagination = $paginator->paginate(
-            $adRepository->queryAll(),
-            $request->query->getInt('page', 1),
-            AdRepository::PAGINATOR_ITEMS_PER_PAGE,
-            [
-                'sortFieldAllowList' => ['ad.id', 'ad.createdAt', 'ad.updatedAt', 'ad.name', 'topic.name'],
-                'defaultSortFieldName' => 'ad.updatedAt',
-                'defaultSortDirection' => 'desc',
-            ]
-        );
+        $pagination = $this->adService->getPaginatedList($page);
 
         return $this->render('ads/index.html.twig', ['pagination' => $pagination]);
     }
 
-
+    /**
+     * View action.
+     *
+     * @param Ad $ad Ad entity
+     *
+     * @return Response HTTP response
+     */
     #[Route(
         '/{id}',
         name: 'ad_read',
         requirements: ['id' => '[1-9]\d*'],
         methods: ['GET']
     )]
-    public function view(AdRepository $repository, int $id): Response
+    public function read(Ad $ad): Response
     {
-        $ad = $repository->findOneById($id);
-
-        if (null === $ad) {
-            throw $this->createNotFoundException();
-        }
-
         return $this->render(
             'ads/read.html.twig',
             ['ad' => $ad]
