@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block name %}
-    {{ 'name.ad_list'|trans }}
+    {{ 'name.topic_list'|trans }}
 {% endblock %}
 
 {% block body %}
-    <h1>{{ 'name.ad_list'|trans }}</h1>
+    <h1>{{ 'name.topic_list'|trans }}</h1>
 <button type="button" class="btn btn-secondary" onclick="window.location.href=#" style="margin-top:2rem; margin-bottom:2rem;">
         <img src="{{ asset('images/plus-circle.svg') }}" alt="View" width="30" height="24">
         {{ 'action.create'|trans }}
@@ -19,32 +19,30 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'ad.id') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.createdAt'|trans, 'ad.createdAt') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.updatedAt'|trans, 'ad.updatedAt') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'ad.name') }}</th>
-                <th>{{ 'label.topic'|trans }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'topic.id') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.createdAt'|trans, 'topic.createdAt') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.updatedAt'|trans, 'topic.updatedAt') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'topic.name') }}</th>
                 <th>{{ 'label.actions'|trans }}</th>
             </tr>
             </thead>
             <tbody>
-            {% for ad in pagination.items %}
+            {% for topic in pagination.items %}
                 <tr>
-                    <td>{{ ad.id }}</td>
-                    <td>{{ ad.createdAt|format_date('long') }}</td>
-                    <td>{{ ad.updatedAt|format_date('long') }}</td>
-                    <td>{{ ad.name }}</td>
-                    <td>{{ ad.topic.name }}</td>
+                    <td>{{ topic.id }}</td>
+                    <td>{{ topic.createdAt|format_date('long') }}</td>
+                    <td>{{ topic.updatedAt|format_date('long') }}</td>
+                    <td>{{ topic.name }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('ad_view', { id: ad.id }) }}'">
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('topic_read', { id: topic.id }) }}'">
                         <img src="{{ asset('images/eye.svg') }}" alt="View" width="30" height="24">
-                        {{ 'action.view'|trans }}
+                        {{ 'action.read'|trans }}
                     </button>
-                    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('ad_view', { id: ad.id }) }}'">
+                    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('topic_read', { id: topic.id }) }}'">
                         <img src="{{ asset('images/pencil-fill.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.edit'|trans }}
                     </button>
-                    <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('ad_view', { id: ad.id }) }}'">
+                    <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('topic_read', { id: topic.id }) }}'">
                         <img src="{{ asset('images/trash3.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.delete'|trans }}
                     </button>

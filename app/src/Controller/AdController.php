@@ -15,18 +15,10 @@ use Knp\Component\Pager\PaginatorInterface;
 /**
  * Class AdController.
  */
-#[Route('/ad')]
+#[Route('/ads')]
 class AdController extends AbstractController
 {
-/**
-     * Index action.
-     *
-     * @param Request            $request        HTTP Request
-     * @param AdRepository     $adRepository ad repository
-     * @param PaginatorInterface $paginator      Paginator
-     *
-     * @return Response HTTP response
-     */
+
     #[Route(
         name: 'ad_index',
         methods: ['GET']
@@ -38,26 +30,19 @@ class AdController extends AbstractController
             $request->query->getInt('page', 1),
             AdRepository::PAGINATOR_ITEMS_PER_PAGE,
             [
-                'sortFieldAllowList' => ['ad.id', 'ad.createdAt', 'ad.updatedAt', 'ad.name'],
+                'sortFieldAllowList' => ['ad.id', 'ad.createdAt', 'ad.updatedAt', 'ad.name', 'topic.name'],
                 'defaultSortFieldName' => 'ad.updatedAt',
                 'defaultSortDirection' => 'desc',
             ]
         );
 
-        return $this->render('ad/index.html.twig', ['pagination' => $pagination]);
+        return $this->render('ads/index.html.twig', ['pagination' => $pagination]);
     }
 
-    /**
-     * View action.
-     *
-     * @param AdRepository $repository Ad repository
-     * @param int              $id         Ad identifier
-     *
-     * @return Response HTTP response
-     */
+
     #[Route(
         '/{id}',
-        name: 'ad_view',
+        name: 'ad_read',
         requirements: ['id' => '[1-9]\d*'],
         methods: ['GET']
     )]
@@ -70,7 +55,7 @@ class AdController extends AbstractController
         }
 
         return $this->render(
-            'ad/view.html.twig',
+            'ads/read.html.twig',
             ['ad' => $ad]
         );
     }

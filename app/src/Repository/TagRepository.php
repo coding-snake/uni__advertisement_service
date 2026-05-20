@@ -2,15 +2,15 @@
 
 namespace App\Repository;
 
-use App\Entity\Topic;
+use App\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Topic>
+ * @extends ServiceEntityRepository<Tag>
  */
-class TopicRepository extends ServiceEntityRepository
+class TagRepository extends ServiceEntityRepository
 {
     /**
      * Items per page.
@@ -30,7 +30,7 @@ class TopicRepository extends ServiceEntityRepository
      */
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Topic::class);
+        parent::__construct($registry, Tag::class);
     }
 
     /**
@@ -40,6 +40,6 @@ class TopicRepository extends ServiceEntityRepository
      */
     public function queryAll(): QueryBuilder
     {
-        return $this->createQueryBuilder('topic');
+        return $this->createQueryBuilder('tag');
     }
 }

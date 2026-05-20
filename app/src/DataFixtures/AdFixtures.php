@@ -7,7 +7,9 @@
 namespace App\DataFixtures;
 
 use App\DataFixtures\TopicFixtures;
+use App\DataFixtures\TagFixtures;
 use App\Entity\Ad;
+use App\Entity\Tag;
 use App\Entity\Topic;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -50,6 +52,12 @@ class AdFixtures extends AbstractBaseFixtures implements DependentFixtureInterfa
             $topic = $this->getRandomReference('topic', Topic::class);
             $ad->setTopic($topic);
 
+            $tags = $this->getRandomReferenceList('tag', Tag::class, rand(1, 3));
+
+            foreach ($tags as $tag) {
+                $ad->addTag($tag);
+            }
+
             return $ad;
         });
     }
@@ -64,6 +72,8 @@ class AdFixtures extends AbstractBaseFixtures implements DependentFixtureInterfa
      */
     public function getDependencies(): array
     {
-        return [TopicFixtures::class];
+        return [
+            TopicFixtures::class,
+            TagFixtures::class];
     }
 }

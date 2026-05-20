@@ -40,6 +40,9 @@ class AdRepository extends ServiceEntityRepository
      */
     public function queryAll(): QueryBuilder
     {
-        return $this->createQueryBuilder('ad');
+        return $this->createQueryBuilder('ad')
+        ->select('ad', 'topic', 'tags')
+        ->join('ad.topic', 'topic')
+        ->leftJoin('ad.tags', 'tags');
     }
 }

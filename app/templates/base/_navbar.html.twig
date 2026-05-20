@@ -7,19 +7,16 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">{{'navbar.menu'|trans}}</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" href="#">{{'navbar.account'|trans}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ path('ad_index') }}">{{'navbar.ads'|trans}}</a>
+          <a class="nav-link {{ app.current_route == 'ad_index' ? 'active' : '' }}" href="{{ path('ad_index') }}">{{'navbar.ads'|trans}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">{{'navbar.topics'|trans}}</a>
+          <a class="nav-link {{ app.current_route == 'topic_index' ? 'active' : '' }}" href="{{ path('topic_index') }}">{{'navbar.topics'|trans}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">{{'navbar.tags'|trans}}</a>
+          <a class="nav-link {{ app.current_route == 'tag_index' ? 'active' : '' }}" href="{{ path('tag_index') }}">{{'navbar.tags'|trans}}</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">{{'navbar.admin'|trans}}</a>

@@ -1,19 +1,21 @@
 <?php
 
 /**
- * Category class.
+ * Tag class
  */
 namespace App\Entity;
 
-use App\Repository\TopicRepository;
+use App\Repository\TagRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity(repositoryClass: TopicRepository::class)]
-#[ORM\Table(name: 'topics')]
-#[ORM\UniqueConstraint(name: 'uq_topics_name', columns: ['name'])]
+#[ORM\Entity(repositoryClass: TagRepository::class)]
+#[ORM\Table(name: 'tags')]
+#[ORM\UniqueConstraint(name: 'uq_tags_name', columns: ['name'])]
 #[UniqueEntity(fields: ['name'])]
-class Topic
+class Tag
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -28,6 +30,17 @@ class Topic
 
     #[ORM\Column(type: 'string', length: 64)]
     private ?string $name = null;
+
+    /**
+     * @var Collection<int, Ad>
+     */
+    #[ORM\ManyToMany(targetEntity: Ad::class, mappedBy: 'tags')]
+    private Collection $ads;
+
+    public function __construct()
+    {
+        $this->ads = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -62,5 +75,33 @@ class Topic
     public function setName(string $name): void
     {
         $this->name = $name;
+
+    }
+
+    /**
+     * @return Collection<int, Ad>
+     */
+    public function getAds(): Collection
+    {
+        return $this->ads;
+    }
+
+    public function addAd(Ad $ad): static
+    {
+        if (!$this->ads->contains($ad)) {
+            $this->ads->add($ad);
+            $ad->addTag($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAd(Ad $ad): static
+    {
+        if ($this->ads->removeElement($ad)) {
+            $ad->removeTag($this);
+        }
+
+        return $this;
     }
 }

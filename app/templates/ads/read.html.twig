@@ -11,6 +11,12 @@
         <dl class="dl-horizontal">
             <dt>{{ 'label.id'|trans }}</dt>
             <dd>{{ ad.id }}</dd>
+            <dt>{{ 'label.tags'|trans }}</dt>
+            <dd>
+            {% for tag in ad.tags %}
+                {{ tag.name }}{% if not loop.last %}, {% else %}.{% endif %}
+            {% endfor %}
+            </dd>
             <dt>{{ 'label.createdAt'|trans }}</dt>
             <dd>{{ ad.createdAt|date('Y/m/d') }}</dd>
             <dt>{{ 'label.updatedAt'|trans }}</dt>
