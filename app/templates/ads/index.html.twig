@@ -6,7 +6,7 @@
 
 {% block body %}
     <h1>{{ 'name.ad_list'|trans }}</h1>
-<button type="button" class="btn btn-secondary" onclick="window.location.href=#" style="margin-top:2rem; margin-bottom:2rem;">
+<button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('ad_create') }}'" style="margin-top:2rem; margin-bottom:2rem;">
         <img src="{{ asset('images/plus-circle.svg') }}" alt="View" width="30" height="24">
         {{ 'action.create'|trans }}
     </button>
@@ -36,18 +36,24 @@
                     <td>{{ ad.name }}</td>
                     <td>{{ ad.topic.name }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('ad_read', { id: ad.id }) }}'">
+                    {% if is_granted('VIEW', task) %}
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('ad_read', { id: ad.id }) }}'">
                         <img src="{{ asset('images/eye.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.view'|trans }}
                     </button>
-                    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('ad_read', { id: ad.id }) }}'">
+                    {% endif %}
+                    {% if is_granted('EDIT', task) %}
+                    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('ad_edit', { id: ad.id }) }}'">
                         <img src="{{ asset('images/pencil-fill.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.edit'|trans }}
                     </button>
-                    <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('ad_read', { id: ad.id }) }}'">
+                    {% endif %}
+                    {% if is_granted('DELETE', task) %}
+                    <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('ad_delete', { id: ad.id }) }}'">
                         <img src="{{ asset('images/trash3.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.delete'|trans }}
                     </button>
+                    {% endif %}
                     </td>
                 </tr>
             {% endfor %}

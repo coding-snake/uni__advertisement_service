@@ -42,4 +42,26 @@ class TopicRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('topic');
     }
+
+    /**
+     * Save entity.
+     *
+     * @param Topic $topic Topic entity
+     */
+    public function save(Topic $topic): void
+    {
+        $this->getEntityManager()->persist($topic);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * Delete entity.
+     *
+     * @param Topic $topic Topic entity
+     */
+    public function delete(Topic $topic): void
+    {
+        $this->getEntityManager()->remove($topic);
+        $this->getEntityManager()->flush();
+    }
 }

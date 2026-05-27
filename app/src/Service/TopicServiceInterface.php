@@ -22,4 +22,26 @@ interface TopicServiceInterface
      */
     public function getPaginatedList(int $page): PaginationInterface;
 
+    /**
+     * Save entity.
+     *
+     * @param Topic $topic Topic entity
+     */
+    public function save(Topic $topic): void;
+
+    /**
+     * Delete entity.
+     *
+     * @param Topic $topic Topic entity
+     */
+    public function delete(Topic $topic): void;
+
+    /**
+     * Can Topic be deleted?
+     *
+     * @param Topic $topic Topic entity
+     *
+     * @return bool Result
+     */
+    public function canBeDeleted(Topic $topic): bool;
 }

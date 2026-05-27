@@ -1,13 +1,16 @@
 <?php
 
-
 /**
  * Topic service.
  */
 
 namespace App\Service;
 
+use App\Entity\Topic;
+use App\Repository\AdRepository;
 use App\Repository\TopicRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -33,7 +36,7 @@ class TopicService implements TopicServiceInterface
      * @param TopicRepository $topicRepository Topic repository
      * @param PaginatorInterface $paginator Paginator
      */
-    public function __construct(private readonly TopicRepository $topicRepository, private readonly PaginatorInterface $paginator)
+    public function __construct(private readonly TopicRepository $topicRepository, private readonly PaginatorInterface $paginator, private readonly AdRepository $adRepository)
     {
     }
 
@@ -56,5 +59,47 @@ class TopicService implements TopicServiceInterface
                 'defaultSortDirection' => 'desc',
             ]
         );
+    }
+
+    /**
+     * Save entity.
+     *
+     * @param Topic $topic Topic entity
+     */
+    public function save(Topic $topic): void
+    {
+        $topic->setUpdatedAt(new \DateTimeImmutable());
+        if (null === $topic->getId()) {
+            $topic->setCreatedAt(new \DateTimeImmutable());
+        }
+        $this->topicRepository->save($topic);
+    }
+
+    /**
+     * Delete entity.
+     *
+     * @param Topic $topic Topic entity
+     */
+    public function delete(Topic $topic): void
+    {
+        $this->topicRepository->delete($topic);
+    }
+
+    /**
+     * Can Topic be deleted?
+     *
+     * @param Topic $topic Topic entity
+     *
+     * @return bool Result
+     */
+    public function canBeDeleted(Topic $topic): bool
+    {
+        try {
+            $result = $this->adRepository->countByTopic($topic);
+
+            return !($result > 0);
+        } catch (NoResultException|NonUniqueResultException) {
+            return false;
+        }
     }
 }

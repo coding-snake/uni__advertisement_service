@@ -22,4 +22,17 @@ interface AdServiceInterface
      */
     public function getPaginatedList(int $page): PaginationInterface;
 
+    /**
+     * Save entity.
+     *
+     * @param Ad $ad Ad entity
+     */
+    public function save(Ad $ad): void;
+
+    /**
+     * Delete entity.
+     *
+     * @param Ad $ad Ad entity
+     */
+    public function delete(Ad $ad): void;
 }

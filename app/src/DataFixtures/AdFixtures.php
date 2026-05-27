@@ -11,6 +11,7 @@ use App\DataFixtures\TagFixtures;
 use App\Entity\Ad;
 use App\Entity\Tag;
 use App\Entity\Topic;
+use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
@@ -58,6 +59,10 @@ class AdFixtures extends AbstractBaseFixtures implements DependentFixtureInterfa
                 $ad->addTag($tag);
             }
 
+            /** @var User $author */
+            $author = $this->getRandomReference('user', User::class);
+            $ad->setAuthor($author);
+
             return $ad;
         });
     }
@@ -74,6 +79,7 @@ class AdFixtures extends AbstractBaseFixtures implements DependentFixtureInterfa
     {
         return [
             TopicFixtures::class,
-            TagFixtures::class];
+            TagFixtures::class,
+            UserFixtures::class];
     }
 }

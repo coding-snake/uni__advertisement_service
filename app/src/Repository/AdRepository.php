@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Ad;
+use App\Entity\Topic;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -45,4 +48,48 @@ class AdRepository extends ServiceEntityRepository
         ->join('ad.topic', 'topic')
         ->leftJoin('ad.tags', 'tags');
     }
+
+    /**
+     * Save entity.
+     *
+     * @param Ad $ad Ad entity
+     */
+    public function save(Ad $ad): void
+    {
+        $this->getEntityManager()->persist($ad);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * Delete entity.
+     *
+     * @param Ad $ad Ad entity
+     */
+    public function delete(Ad $ad): void
+    {
+        $this->getEntityManager()->remove($ad);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * Count ads by topic.
+     *
+     * @param Topic $topic Topic
+     *
+     * @return int Number of ads in topic
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function countByTopic(Topic $topic): int
+    {
+        $qb = $this->createQueryBuilder('ad');
+
+        return $qb->select($qb->expr()->countDistinct('ad.id'))
+            ->where('ad.topic = :topic')
+            ->setParameter(':topic', $topic)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 }

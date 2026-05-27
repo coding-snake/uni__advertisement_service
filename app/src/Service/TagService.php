@@ -6,9 +6,10 @@
 
 namespace App\Service;
 
+use App\Entity\Tag;
 use App\Repository\TagRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use Knp\Component\pager\PaginatorInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * Class AdService
@@ -55,5 +56,29 @@ class TagService implements TagServiceInterface
                 'defaultSortDirection' => 'desc',
             ]
         );
+    }
+
+    /**
+     * Save entity.
+     *
+     * @param Tag $tag Tag entity
+     */
+    public function save(Tag $tag): void
+    {
+        $tag->setUpdatedAt(new \DateTimeImmutable());
+        if (null === $tag->getId()) {
+            $tag->setCreatedAt(new \DateTimeImmutable());
+        }
+        $this->tagRepository->save($tag);
+    }
+
+    /**
+     * Delete entity.
+     *
+     * @param Tag $tag Tag entity
+     */
+    public function delete(Tag $tag): void
+    {
+        $this->tagRepository->delete($tag);
     }
 }

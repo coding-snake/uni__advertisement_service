@@ -6,7 +6,7 @@
 
 {% block body %}
     <h1>{{ 'name.tag_list'|trans }}</h1>
-<button type="button" class="btn btn-secondary" onclick="window.location.href=#" style="margin-top:2rem; margin-bottom:2rem;">
+<button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('tag_create') }}'" style="margin-top:2rem; margin-bottom:2rem;">
         <img src="{{ asset('images/plus-circle.svg') }}" alt="View" width="30" height="24">
         {{ 'action.create'|trans }}
     </button>
@@ -38,11 +38,11 @@
                         <img src="{{ asset('images/eye.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.read'|trans }}
                     </button>
-                    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('tag_read', { id: tag.id }) }}'">
+                    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('tag_edit', { id: tag.id }) }}'">
                         <img src="{{ asset('images/pencil-fill.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.edit'|trans }}
                     </button>
-                    <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('tag_read', { id: tag.id }) }}'">
+                    <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('tag_delete', { id: tag.id }) }}'">
                         <img src="{{ asset('images/trash3.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.delete'|trans }}
                     </button>
