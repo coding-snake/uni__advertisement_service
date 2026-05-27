@@ -36,19 +36,19 @@
                     <td>{{ ad.name }}</td>
                     <td>{{ ad.topic.name }}</td>
                     <td>
-                    {% if is_granted('VIEW', task) %}
+                    {% if is_granted('VIEW', ad) %}
                     <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('ad_read', { id: ad.id }) }}'">
                         <img src="{{ asset('images/eye.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.view'|trans }}
                     </button>
                     {% endif %}
-                    {% if is_granted('EDIT', task) %}
+                    {% if is_granted('EDIT', ad) %}
                     <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('ad_edit', { id: ad.id }) }}'">
                         <img src="{{ asset('images/pencil-fill.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.edit'|trans }}
                     </button>
                     {% endif %}
-                    {% if is_granted('DELETE', task) %}
+                    {% if is_granted('DELETE', ad) %}
                     <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('ad_delete', { id: ad.id }) }}'">
                         <img src="{{ asset('images/trash3.svg') }}" alt="View" width="30" height="24">
                         {{ 'action.delete'|trans }}

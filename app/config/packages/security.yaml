@@ -19,12 +19,12 @@ security:
       form_login:
         login_path: app_login
         check_path: app_login
-        default_target_path: task_index
+        default_target_path: ad_index
         enable_csrf: true
       logout:
         path: app_logout
         # where to redirect after logout
-        target: app_login
+        target: ad_index
 
       # activate different ways to authenticate
       # https://symfony.com/doc/current/security.html#the-firewall

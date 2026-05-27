@@ -108,7 +108,7 @@ final class AdVoter extends Voter
     }
 
     /**
-     * Checks if a user can view a task.
+     * Checks if a user can view an ad.
      *
      * @param Ad          $ad Ad entity
      * @param UserInterface $user User
