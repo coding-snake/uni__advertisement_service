@@ -1,13 +1,17 @@
 <?php
-
 /**
- * Security controller.
+ * Security Controller
  */
-
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Form\Type\UserType;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -15,12 +19,13 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 /**
  * Class SecurityController.
  */
+#[Route('/security')]
 class SecurityController extends AbstractController
 {
     /**
      * Login action.
      *
-     * @param AuthenticationUtils $authenticationUtils Authentication utilities
+     * @param AuthenticationUtils $authenticationUtils Authentication utils
      *
      * @return Response HTTP response
      */
@@ -28,13 +33,11 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser() instanceof UserInterface) {
-            return $this->redirectToRoute('ad_index');
+            return $this->redirectToRoute('home');
         }
 
-        // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
@@ -45,10 +48,55 @@ class SecurityController extends AbstractController
 
     /**
      * Logout action.
+     *
+     * @throws \LogicException
      */
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    /**
+     * Register action.
+     *
+     * @param Request                     $request            HTTP request
+     * @param UserPasswordHasherInterface $userPasswordHasher Password hasher
+     * @param EntityManagerInterface      $entityManager      Entity manager
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/register', name: 'app_register')]
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->getUser() instanceof UserInterface) {
+            return $this->redirectToRoute('home');
+        }
+
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('password')->getData()
+                )
+            );
+
+            try {
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('app_login');
+            } catch (UniqueConstraintViolationException) {
+                $this->addFlash('danger', 'Ten adres e-mail jest już zajęty.');
+            }
+        }
+
+        return $this->render('security/register.html.twig', [
+            'registrationForm' => $form->createView(),
+        ]);
     }
 }

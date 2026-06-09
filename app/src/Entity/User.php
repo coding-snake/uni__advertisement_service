@@ -1,9 +1,7 @@
 <?php
-
 /**
- * User entity.
+ * User Entity
  */
-
 namespace App\Entity;
 
 use App\Entity\Enum\UserRole;
@@ -21,45 +19,30 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * Primary key.
-     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * Email.
-     *
-     * @var string|null
-     */
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
     private ?string $email = null;
 
-    /**
-     * Roles.
-     *
-     * @var list<int, string>
-     */
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
-    /**
-     * Hashed password.
-     *
-     * @var string|null
-     */
     #[ORM\Column(type: 'string')]
-    #[Assert\NotBlank]
     private ?string $password = null;
 
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    private ?string $username = null;
+
     /**
-     * Getter for id.
+     * Getter for ID.
      *
-     * @return int|null Id
+     * @return int|null id
      */
     public function getId(): ?int
     {
@@ -69,7 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Getter for email.
      *
-     * @return string|null Email
+     * @return string|null email
      */
     public function getEmail(): ?string
     {
@@ -79,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Setter for email.
      *
-     * @param string $email Email
+     * @param string $email email
      */
     public function setEmail(string $email): void
     {
@@ -87,9 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
+     * Get user identifier.
      *
      * @return string User identifier
      */
@@ -101,14 +82,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Getter for roles.
      *
-     * @see UserInterface
-     *
-     * @return list<string>
+     * @return array Roles
      */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = UserRole::ROLE_USER->value;
 
         return array_unique($roles);
@@ -117,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Setter for roles.
      *
-     * @param list<int, string> $roles Roles
+     * @param array $roles Roles
      */
     public function setRoles(array $roles): void
     {
@@ -127,8 +105,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Getter for password.
      *
-     * @see PasswordAuthenticatedUserInterface
-     *
      * @return string|null Password
      */
     public function getPassword(): ?string
@@ -137,9 +113,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * Getter for username.
+     *
+     * @return string|null Username
+     */
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    /**
      * Setter for password.
      *
-     * @param string $password User password
+     * @param string $password Password
      */
     public function setPassword(string $password): void
     {
@@ -147,9 +133,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Removes sensitive information from the token.
+     * Setter for username.
      *
-     * @see UserInterface
+     * @param string $username Username
+     */
+    public function setUsername(string $username): void
+    {
+        $this->username = $username;
+    }
+
+    /**
+     * Erase credentials.
      */
     public function eraseCredentials(): void
     {

@@ -5,6 +5,7 @@ RUN set -eux; \
     apt-get install -y --no-install-recommends \
         ca-certificates curl git unzip zip \
         locales \
+        dos2unix \
         libicu-dev \
         libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
         libzip-dev zlib1g-dev \

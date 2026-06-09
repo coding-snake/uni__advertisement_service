@@ -2,14 +2,387 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" datatype="plaintext" original="file.ext">
     <body>
-      <trans-unit id="example.simple">
-        <source>example.simple</source>
-        <target>Simple</target>
+      <trans-unit id="label.new_password">
+        <source>label.new_password</source>
+        <target>New password</target>
       </trans-unit>
-      <trans-unit id="example.variable">
-        <source>example.variable</source>
-        <target>Variable #%id%</target>
+      <trans-unit id="label.repeat_password">
+        <source>label.repeat_password</source>
+        <target>Repeat password</target>
       </trans-unit>
+
+      <trans-unit id="message.enter_password">
+        <source>message.enter_password</source>
+        <target>Enter a password</target>
+      </trans-unit>
+      <trans-unit id="message.topic_must_exist_firsts">
+        <source>message.topic_must_exist_first</source>
+        <target>First, create a topic</target>
+      </trans-unit>
+      <trans-unit id="message.created_successfully">
+        <source>message.created_successfully</source>
+        <target>Created successfully</target>
+      </trans-unit>
+      <trans-unit id="message.edited_successfully">
+        <source>message.edited_successfully</source>
+        <target>Edited successfully</target>
+      </trans-unit>
+      <trans-unit id="message.deleted_successfully">
+        <source>message.deleted_successfully</source>
+        <target>Deleted successfully</target>
+      </trans-unit>
+      <trans-unit id="message.username_changed_successfully">
+        <source>message.username_changed_successfully</source>
+        <target>Username has been changed</target>
+      </trans-unit>
+      <trans-unit id="message.password_changed_successfully">
+        <source>message.password_changed_successfully</source>
+        <target>Password has been changed</target>
+      </trans-unit>
+      <trans-unit id="message.topic_contains_ads">
+        <source>message.topic_contains_ads</source>
+        <target>You can't delete this topic, it has assigned ads</target>
+      </trans-unit>
+      <trans-unit id="message.empty_list">
+        <source>message.empty_list</source>
+        <target>This list is empty</target>
+      </trans-unit>
+      <trans-unit id="message.added_by_guest">
+        <source>message.added_by_guest</source>
+        <target>Added by a guest</target>
+      </trans-unit>
+      <trans-unit id="message.ad_not_found">
+        <source>message.ad_not_found</source>
+        <target>The ad has not been found</target>
+      </trans-unit>
+      <trans-unit id="message.topic_not_found">
+        <source>message.topic_not_found</source>
+        <target>The topic has not been found</target>
+      </trans-unit>
+      <trans-unit id="message.form_error">
+        <source>message.form_error</source>
+        <target>There is an error in this form</target>
+      </trans-unit>
+      <trans-unit id="message.no_users_found">
+        <source>message.no_users_found</source>
+        <target>There are no users here</target>
+      </trans-unit>
+      <trans-unit id="navbar.account">
+        <source>navbar.account</source>
+        <target>Account</target>
+      </trans-unit>
+      <trans-unit id="navbar.topics">
+        <source>navbar.topics</source>
+        <target>Topics</target>
+      </trans-unit>
+      <trans-unit id="navbar.tags">
+        <source>navbar.tags</source>
+        <target>Tags</target>
+      </trans-unit>
+      <trans-unit id="navbar.admin">
+        <source>navbar.admin</source>
+        <target>Administration</target>
+      </trans-unit>
+      <trans-unit id="navbar.ads">
+        <source>navbar.ads</source>
+        <target>Ads</target>
+      </trans-unit>
+      <trans-unit id="label.id">
+        <source>label.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="label.createdAt">
+        <source>label.createdAt</source>
+        <target>Created</target>
+      </trans-unit>
+      <trans-unit id="label.updatedAt">
+        <source>label.updatedAt</source>
+        <target>Updated</target>
+      </trans-unit>
+      <trans-unit id="label.verified">
+        <source>label.verified</source>
+        <target>Verified</target>
+      </trans-unit>
+      <trans-unit id="label.name">
+        <source>label.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="label.topic">
+        <source>label.topic</source>
+        <target>Topic</target>
+      </trans-unit>
+      <trans-unit id="label.actions">
+        <source>label.actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="label.yes">
+        <source>label.yes</source>
+        <target>Yes</target>
+      </trans-unit>
+      <trans-unit id="label.no">
+        <source>label.no</source>
+        <target>No</target>
+      </trans-unit>
+      <trans-unit id="label.author">
+        <source>label.author</source>
+        <target>Author</target>
+      </trans-unit>
+      <trans-unit id="label.verification">
+        <source>label.verification</source>
+        <target>Verify</target>
+      </trans-unit>
+      <trans-unit id="label.tags">
+        <source>label.tags</source>
+        <target>Tags</target>
+      </trans-unit>
+      <trans-unit id="label.content">
+        <source>label.content</source>
+        <target>Content</target>
+      </trans-unit>
+
+      <trans-unit id="label.welcome_user">
+        <source>label.welcome_user</source>
+        <target>Welcome user %email%</target>
+      </trans-unit>
+
+      <trans-unit id="action.create">
+        <source>action.create</source>
+        <target>Create</target>
+      </trans-unit>
+
+      <trans-unit id="action.view">
+        <source>action.view</source>
+        <target>Read</target>
+      </trans-unit>
+
+      <trans-unit id="action.read">
+        <source>action.read</source>
+        <target>Read</target>
+      </trans-unit>
+
+      <trans-unit id="action.edit">
+        <source>action.edit</source>
+        <target>Edit</target>
+      </trans-unit>
+
+      <trans-unit id="action.delete">
+        <source>action.delete</source>
+        <target>Delete</target>
+      </trans-unit>
+
+      <trans-unit id="action.save">
+        <source>action.save</source>
+        <target>Save</target>
+      </trans-unit>
+      
+      <trans-unit id="action.back_to_list">
+        <source>action.back_to_list</source>
+        <target>Back to list</target>
+      </trans-unit>
+
+      <trans-unit id="action.go_back_to_ads">
+        <source>action.go_back_to_ads</source>
+        <target>Go back to list of ads</target>
+      </trans-unit>
+      <trans-unit id="action.change_verification">
+        <source>action.change_verification</source>
+        <target>Change status of verification</target>
+      </trans-unit>
+
+      <trans-unit id="action.ad_list_per_topic">
+        <source>action.ad_list_per_topic</source>
+        <target>List of ads per topic</target>
+      </trans-unit>
+
+      <trans-unit id="action.ad_details">
+        <source>action.ad_details</source>
+        <target>Details of ad %id%</target>
+      </trans-unit>
+      
+      <trans-unit id="action.ad_edit">
+        <source>action.ad_edit</source>
+        <target>Edit of ad %id%</target>
+      </trans-unit>
+
+      <trans-unit id="action.ad_create">
+        <source>action.ad_create</source>
+        <target>Create ad</target>
+      </trans-unit>
+      <trans-unit id="action.ad_list_per_tag">
+        <source>action.ad_list_per_tag</source>
+        <target>List of ads per tag</target>
+      </trans-unit>
+
+      <trans-unit id="action.ad_list">
+        <source>action.ad_list</source>
+        <target>List of ads</target>
+      </trans-unit>
+
+      <trans-unit id="action.ad_delete">
+        <source>action.ad_delete</source>
+        <target>Delete of ad %id%</target>
+      </trans-unit>
+
+      <trans-unit id="action.change_username">
+        <source>action.change_username</source>
+        <target>Change username</target>
+      </trans-unit>
+
+      <trans-unit id="action.account_of">
+        <source>action.account_of</source>
+        <target>Account of %email%</target>
+      </trans-unit>
+
+      <trans-unit id="action.change_password">
+        <source>action.change_password</source>
+        <target>Change password</target>
+      </trans-unit>
+
+      <trans-unit id="title.ad_list_per_topic">
+        <source>title.ad_list_per_topic</source>
+        <target>List of ads per topic</target>
+      </trans-unit>
+      <trans-unit id="title.ad_details">
+        <source>title.ad_details</source>
+        <target>Details of ad %id%</target>
+      </trans-unit>
+      <trans-unit id="title.ad_edit">
+        <source>title.ad_edit</source>
+        <target>Edit ad %id%</target>
+      </trans-unit>
+      <trans-unit id="title.ad_create">
+        <source>title.ad_create</source>
+        <target>Create ad</target>
+      </trans-unit>
+      <trans-unit id="title.ad_list_per_tag">
+        <source>title.ad_list_per_tag</source>
+        <target>List of ads per tag</target>
+      </trans-unit>
+      <trans-unit id="title.ad_list">
+        <source>title.ad_list</source>
+        <target>List of ads</target>
+      </trans-unit>
+      <trans-unit id="title.ad_delete">
+        <source>title.ad_delete</source>
+        <target>Delete ad %id%</target>
+      </trans-unit>
+      <trans-unit id="title.change_username">
+        <source>title.change_username</source>
+        <target>Change username</target>
+      </trans-unit>
+      <trans-unit id="title.account_of">
+        <source>title.account_of</source>
+        <target>Account of %email%</target>
+      </trans-unit>
+      <trans-unit id="title.change_password">
+        <source>title.change_password</source>
+        <target>Change password </target>
+      </trans-unit>
+      <trans-unit id="title.topic_details">
+        <source>title.topic_details</source>
+        <target>Details of topic %id%</target>
+      </trans-unit>
+      <trans-unit id="title.topic_edit">
+        <source>title.topic_edit</source>
+        <target>Edit of topic %id%</target>
+      </trans-unit>
+      <trans-unit id="title.topic_create">
+        <source>title.topic_create</source>
+        <target>Create topic</target>
+      </trans-unit>
+      <trans-unit id="title.topic_list">
+        <source>title.topic_list</source>
+        <target>List of topics</target>
+      </trans-unit>
+      <trans-unit id="title.topic_delete">
+        <source>title.topic_delete</source>
+        <target>Delete of topic %id%</target>
+      </trans-unit>
+      <trans-unit id="title.homepage">
+        <source>title.homepage</source>
+        <target>Homepage</target>
+      </trans-unit>
+      <trans-unit id="action.login">
+        <source>action.login</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="action.logout">
+        <source>action.logout</source>
+        <target>Logout</target>
+      </trans-unit>
+      <trans-unit id="action.register">
+        <source>action.register</source>
+        <target>Register</target>
+      </trans-unit>
+      <trans-unit id="action.go_back">
+        <source>action.go_back</source>
+        <target>Go back</target>
+      </trans-unit>
+      <trans-unit id="action.edit_username">
+        <source>action.edit_username</source>
+        <target>Change username</target>
+      </trans-unit>
+      <trans-unit id="action.edit_password">
+        <source>action.edit_password</source>
+        <target>Change password</target>
+      </trans-unit>
+      <trans-unit id="action.view_users">
+        <source>action.view_users</source>
+        <target>View users</target>
+      </trans-unit>
+      <trans-unit id="label.roles">
+        <source>label.roles</source>
+        <target>Roles</target>
+      </trans-unit>
+      <trans-unit id="label.email">
+        <source>label.email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="label.username">
+        <source>label.username</source>
+        <target>Username</target>
+      </trans-unit>
+      <trans-unit id="title.change_password_of">
+        <source>title.change_password_of</source>
+        <target>Change password of %email%</target>
+      </trans-unit>
+      <trans-unit id="title.tag_details">
+        <source>title.tag_details</source>
+        <target>Details of tag %id%</target>
+      </trans-unit>
+      <trans-unit id="title.tag_edit">
+        <source>title.tag_edit</source>
+        <target>Edit of tag %id%</target>
+      </trans-unit>
+      <trans-unit id="title.tag_create">
+        <source>title.tag_create</source>
+        <target>Create tag</target>
+      </trans-unit>
+      <trans-unit id="title.tag_list">
+        <source>title.tag_list</source>
+        <target>List of tags</target>
+      </trans-unit>
+      <trans-unit id="title.tag_delete">
+        <source>title.tag_delete</source>
+        <target>Delete of tag %id%</target>
+      </trans-unit>
+      <trans-unit id="title.login">
+        <source>title.login</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="title.register">
+        <source>title.register</source>
+        <target>Register</target>
+      </trans-unit>
+      <trans-unit id="title.user_list">
+        <source>title.user_list</source>
+        <target>List of users</target>
+      </trans-unit>
+      <trans-unit id="title.edit_username_of">
+        <source>title.edit_username_of</source>
+        <target>Edit username of %email%</target>
+      </trans-unit>
+      
     </body>
   </file>
 </xliff>

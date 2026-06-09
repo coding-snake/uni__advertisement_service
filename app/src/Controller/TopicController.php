@@ -1,12 +1,12 @@
 <?php
 /**
- * Topic controller.
+ * Topic Controller
  */
-
 namespace App\Controller;
 
 use App\Entity\Topic;
 use App\Form\Type\TopicType;
+use App\Security\Voter\TopicVoter;
 use App\Service\TopicServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -14,20 +14,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Class Controller.
- * 
- * @param TopicServiceInterface $topicService Topic service
+ * Class TopicController.
  */
 #[Route('/topics')]
 class TopicController extends AbstractController
 {
     /**
      * Constructor.
-     * 
+     *
      * @param TopicServiceInterface $topicService Topic service
+     * @param TranslatorInterface   $translator   Translator
      */
     public function __construct(private readonly TopicServiceInterface $topicService, private readonly TranslatorInterface $translator)
     {
@@ -84,9 +84,15 @@ class TopicController extends AbstractController
         name: 'topic_create',
         methods: ['GET', 'POST']
     )]
+    #[IsGranted(TopicVoter::CREATE)]
     public function create(Request $request): Response
     {
         $topic = new Topic();
+
+        if ($this->getUser()) {
+            $topic->setAuthor($this->getUser());
+        }
+
         $form = $this->createForm(TopicType::class, $topic);
         $form->handleRequest($request);
 
@@ -97,6 +103,7 @@ class TopicController extends AbstractController
                 'success',
                 $this->translator->trans('message.created_successfully')
             );
+
             return $this->redirectToRoute('topic_index');
         }
 
@@ -109,8 +116,8 @@ class TopicController extends AbstractController
     /**
      * Edit action.
      *
-     * @param Request  $request  HTTP request
-     * @param Topic $topic Topic entity
+     * @param Request $request HTTP request
+     * @param Topic   $topic   Topic entity
      *
      * @return Response HTTP response
      */
@@ -120,6 +127,7 @@ class TopicController extends AbstractController
         requirements: ['id' => '[1-9]\d*'],
         methods: ['GET', 'PUT']
     )]
+    #[IsGranted(TopicVoter::EDIT, subject: 'topic')]
     public function edit(Request $request, Topic $topic): Response
     {
         $form = $this->createForm(
@@ -155,8 +163,8 @@ class TopicController extends AbstractController
     /**
      * Delete action.
      *
-     * @param Request  $request  HTTP request
-     * @param Topic $topic Topic entity
+     * @param Request $request HTTP request
+     * @param Topic   $topic   Topic entity
      *
      * @return Response HTTP response
      */
@@ -166,6 +174,7 @@ class TopicController extends AbstractController
         requirements: ['id' => '[1-9]\d*'],
         methods: ['GET', 'DELETE']
     )]
+    #[IsGranted(TopicVoter::DELETE, subject: 'topic')]
     public function delete(Request $request, Topic $topic): Response
     {
         if (!$this->topicService->canBeDeleted($topic)) {

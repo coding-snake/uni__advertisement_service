@@ -9,19 +9,22 @@
 
         {% if topic is defined and topic|length %}
         <dl class="dl-horizontal">
+            <dt>{{ 'label.author'|trans }}</dt>
+            <dd>{{ topic.author.username }}</dd>
+
             <dt>{{ 'label.id'|trans }}</dt>
             <dd>{{ topic.id }}</dd>
             </dd>
             <dt>{{ 'label.createdAt'|trans }}</dt>
-            <dd>{{ topic.createdAt|date('Y/m/d') }}</dd>
+            <dd>{{ topic.createdAt|format_date('long') }}</dd>
             <dt>{{ 'label.updatedAt'|trans }}</dt>
-            <dd>{{ topic.updatedAt|date('Y/m/d') }}</dd>
+            <dd>{{ topic.updatedAt|format_date('long') }}</dd>
             <dt>{{ 'label.name'|trans }}</dt>
             <dd>{{  topic.name }}</dd>
         </dl>
     {% else %}
         <p>
-            {{ 'message.ad_not_found'|trans }}
+            {{ 'message.topic_not_found'|trans }}
         </p>
     {% endif %}
 

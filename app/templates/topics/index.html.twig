@@ -1,64 +1,76 @@
 {% extends 'base.html.twig' %}
 
-{% block name %}
-    {{ 'name.topic_list'|trans }}
+{% block title %}
+	{{ 'title.topic_list'|trans }}
 {% endblock %}
 
 {% block body %}
-    <h1>{{ 'name.topic_list'|trans }}</h1>
-<button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('topic_create') }}'" style="margin-top:2rem; margin-bottom:2rem;">
-        <img src="{{ asset('images/plus-circle.svg') }}" alt="View" width="30" height="24">
-        {{ 'action.create'|trans }}
-    </button>
-    {% if pagination is defined and pagination.items|length %}
+	<h1>{{ 'title.topic_list'|trans }}</h1>
+	{% if is_granted('TOPIC_CREATE', 'App\\Entity\\Topic') %}
+		<button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('topic_create') }}'" style="margin-top:2rem; margin-bottom:2rem;">
+			<img src="{{ asset('images/plus-circle.svg') }}" alt="View" width="30" height="24">
+			{{ 'action.create'|trans }}
+		</button>
+	{% endif %}
+	{% if pagination is defined and pagination.items|length %}
 
-        <div class="navigation text-center">
-            {{ knp_pagination_render(pagination) }}
-        </div>
+		<div class="navigation text-center">
+			{{ knp_pagination_render(pagination) }}
+		</div>
 
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'topic.id') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.createdAt'|trans, 'topic.createdAt') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.updatedAt'|trans, 'topic.updatedAt') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'topic.name') }}</th>
-                <th>{{ 'label.actions'|trans }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for topic in pagination.items %}
-                <tr>
-                    <td>{{ topic.id }}</td>
-                    <td>{{ topic.createdAt|format_date('long') }}</td>
-                    <td>{{ topic.updatedAt|format_date('long') }}</td>
-                    <td>{{ topic.name }}</td>
-                    <td>
-                        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('topic_read', { id: topic.id }) }}'">
-                        <img src="{{ asset('images/eye.svg') }}" alt="View" width="30" height="24">
-                        {{ 'action.read'|trans }}
-                    </button>
-                    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('topic_edit', { id: topic.id }) }}'">
-                        <img src="{{ asset('images/pencil-fill.svg') }}" alt="View" width="30" height="24">
-                        {{ 'action.edit'|trans }}
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('topic_delete', { id: topic.id }) }}'">
-                        <img src="{{ asset('images/trash3.svg') }}" alt="View" width="30" height="24">
-                        {{ 'action.delete'|trans }}
-                    </button>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'topic.id') }}</th>
+					<th>{{ knp_pagination_sortable(pagination, 'label.createdAt'|trans, 'topic.createdAt') }}</th>
+					<th>{{ knp_pagination_sortable(pagination, 'label.updatedAt'|trans, 'topic.updatedAt') }}</th>
+					<th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'topic.name') }}</th>
+					<th>{{ 'label.actions'|trans }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for topic in pagination.items %}
+					<tr>
+						<td>{{ topic.id }}</td>
+						<td>{{ topic.createdAt|format_date('long') }}</td>
+						<td>{{ topic.updatedAt|format_date('long') }}</td>
+						<td>
+							<a href="{{ path('ads_per_topic', { id: topic.id }) }}">
+								{{ topic.name }}
+							</a>
+						</td>
+						<td>
+							{% if is_granted('TOPIC_VIEW', topic) %}
+								<button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('topic_read', { id: topic.id }) }}'">
+									<img src="{{ asset('images/eye.svg') }}" alt="View" width="30" height="24">
+									{{ 'action.read'|trans }}
+								</button>
+							{% endif %}
+							{% if is_granted('TOPIC_EDIT', topic) %}
+								<button type="button" class="btn btn-success" onclick="window.location.href='{{ path('topic_edit', { id: topic.id }) }}'">
+									<img src="{{ asset('images/pencil-fill.svg') }}" alt="View" width="30" height="24">
+									{{ 'action.edit'|trans }}
+								</button>
+							{% endif %}
+							{% if is_granted('TOPIC_DELETE', topic) %}
+								<button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('topic_delete', { id: topic.id }) }}'">
+									<img src="{{ asset('images/trash3.svg') }}" alt="View" width="30" height="24">
+									{{ 'action.delete'|trans }}
+								</button>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 
-        <div class="navigation text-center">
-            {{ knp_pagination_render(pagination) }}
-        </div>
+		<div class="navigation text-center">
+			{{ knp_pagination_render(pagination) }}
+		</div>
 
-    {% else %}
-        <p>
-            {{ 'message.empty_list'|trans }}
-        </p>
-    {% endif %}
+	{% else %}
+		<p>
+			{{ 'message.empty_list'|trans }}
+		</p>
+	{% endif %}
 {% endblock %}

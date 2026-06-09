@@ -1,15 +1,17 @@
 <?php
 /**
- * Ad controller.
+ * Ad Controller
  */
-
 namespace App\Controller;
 
 use App\Entity\Ad;
-use App\Entity\User;
+use App\Entity\Tag;
+use App\Entity\Topic;
 use App\Form\Type\AdType;
+use App\Repository\TopicRepository;
 use App\Security\Voter\AdVoter;
 use App\Service\AdServiceInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,17 +23,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class AdController.
- * 
- * @param AdServiceInterface $adService Ad service
- * @param TranslatorInterface      $translator
  */
 #[Route('/ads')]
 class AdController extends AbstractController
 {
     /**
      * Constructor.
-     * 
-     * @param AdServiceInterface $adService Ad service
+     *
+     * @param AdServiceInterface  $adService  Ad service
+     * @param TranslatorInterface $translator Translator
      */
     public function __construct(private readonly AdServiceInterface $adService, private readonly TranslatorInterface $translator)
     {
@@ -56,7 +56,45 @@ class AdController extends AbstractController
     }
 
     /**
-     * View action.
+     * Ads per topic action.
+     *
+     * @param Topic $topic Topic entity
+     * @param int   $page  Page number
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/topics/{id}/ads', name: 'ads_per_topic', methods: ['GET'])]
+    public function adsPerTopic(Topic $topic, #[MapQueryParameter] int $page = 1): Response
+    {
+        $pagination = $this->adService->getPaginatedListByTopic($topic, $page);
+
+        return $this->render('ads/topic.html.twig', [
+            'pagination' => $pagination,
+            'topic' => $topic,
+        ]);
+    }
+
+    /**
+     * Ads per tag action.
+     *
+     * @param Tag $tag  Tag entity
+     * @param int $page Page number
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/tags/{id}/ads', name: 'ads_per_tag', methods: ['GET'])]
+    public function adsPerTag(Tag $tag, #[MapQueryParameter] int $page = 1): Response
+    {
+        $pagination = $this->adService->getPaginatedListByTag($tag, $page);
+
+        return $this->render('ads/tag.html.twig', [
+            'pagination' => $pagination,
+            'tag' => $tag,
+        ]);
+    }
+
+    /**
+     * Read action.
      *
      * @param Ad $ad Ad entity
      *
@@ -78,9 +116,31 @@ class AdController extends AbstractController
     }
 
     /**
+     * Toggle verification action.
+     *
+     * @param Ad                     $ad            Ad entity
+     * @param EntityManagerInterface $entityManager Entity manager
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/{id}/toggle-verification', name: 'ad_toggle_verification', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function toggleVerification(Ad $ad, EntityManagerInterface $entityManager): Response
+    {
+        $ad->setVerified(!$ad->getVerified());
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('ad_read', [
+            'id' => $ad->getId(),
+        ]);
+    }
+
+    /**
      * Create action.
      *
-     * @param Request $request HTTP request
+     * @param Request         $request         HTTP request
+     * @param TopicRepository $topicRepository Topic repository
      *
      * @return Response HTTP response
      */
@@ -89,12 +149,28 @@ class AdController extends AbstractController
         name: 'ad_create',
         methods: ['GET', 'POST']
     )]
-    public function create(Request $request): Response
+    #[IsGranted(AdVoter::CREATE)]
+    public function create(Request $request, TopicRepository $topicRepository): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        $topicCount = $topicRepository->count([]);
+        if (0 === $topicCount) {
+            $this->addFlash(
+                'warning',
+                $this->translator->trans('message.topic_must_exist_first')
+            );
+
+            return $this->redirectToRoute('topic_create');
+        }
+
         $ad = new Ad();
-        $ad->setAuthor($user);
+
+        if ($this->getUser()) {
+            $ad->setAuthor($this->getUser());
+            $ad->setVerified(true);
+        } else {
+            $ad->setVerified(false);
+        }
+
         $form = $this->createForm(AdType::class, $ad);
         $form->handleRequest($request);
 
@@ -118,8 +194,8 @@ class AdController extends AbstractController
     /**
      * Edit action.
      *
-     * @param Request  $request  HTTP request
-     * @param Ad $ad Ad entity
+     * @param Request $request HTTP request
+     * @param Ad      $ad      Ad entity
      *
      * @return Response HTTP response
      */
@@ -143,6 +219,7 @@ class AdController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $ad->setVerified(!$ad->getVerified());
             $this->adService->save($ad);
 
             $this->addFlash(
@@ -155,17 +232,17 @@ class AdController extends AbstractController
 
         return $this->render(
             'ads/edit.html.twig',
-            [ 'form' => $form->createView(),
+            ['form' => $form->createView(),
                 'ad' => $ad,
             ]
         );
     }
-    
+
     /**
      * Delete action.
      *
-     * @param Request  $request  HTTP request
-     * @param Ad $ad Ad entity
+     * @param Request $request HTTP request
+     * @param Ad      $ad      Ad entity
      *
      * @return Response HTTP response
      */

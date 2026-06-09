@@ -16,7 +16,7 @@ use Faker\Generator;
  * @psalm-suppress MissingConstructor
  */
 class TopicFixtures extends AbstractBaseFixtures
-{
+{   
     /**
      * Load data.
      *
@@ -26,6 +26,7 @@ class TopicFixtures extends AbstractBaseFixtures
      */
     public function loadData(): void
     {
+        
         if (!$this->manager instanceof ObjectManager || !$this->faker instanceof Generator) {
             return;
         }

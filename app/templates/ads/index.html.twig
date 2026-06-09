@@ -1,72 +1,86 @@
 {% extends 'base.html.twig' %}
 
-{% block name %}
-    {{ 'name.ad_list'|trans }}
+{% block title %}
+	{{ 'title.ad_list'|trans }}
 {% endblock %}
 
 {% block body %}
-    <h1>{{ 'name.ad_list'|trans }}</h1>
-<button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('ad_create') }}'" style="margin-top:2rem; margin-bottom:2rem;">
-        <img src="{{ asset('images/plus-circle.svg') }}" alt="View" width="30" height="24">
-        {{ 'action.create'|trans }}
-    </button>
-    {% if pagination is defined and pagination.items|length %}
+	<h1>{{ 'title.ad_list'|trans }}</h1>
+	<button type="button" class="btn btn-secondary" onclick="window.location.href='{{ path('ad_create') }}'" style="margin-top:2rem; margin-bottom:2rem;">
+		<img src="{{ asset('images/plus-circle.svg') }}" alt="View" width="30" height="24">
+		{{ 'action.create'|trans }}
+	</button>
+	{% if pagination is defined and pagination.items|length %}
 
-        <div class="navigation text-center">
-            {{ knp_pagination_render(pagination) }}
-        </div>
+		<div class="navigation text-center">
+			{{ knp_pagination_render(pagination) }}
+		</div>
 
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'ad.id') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.createdAt'|trans, 'ad.createdAt') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.updatedAt'|trans, 'ad.updatedAt') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'ad.name') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.topic'|trans, 'topic.name') }}</th>
-                <th>{{ 'label.actions'|trans }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for ad in pagination.items %}
-                <tr>
-                    <td>{{ ad.id }}</td>
-                    <td>{{ ad.createdAt|format_date('long') }}</td>
-                    <td>{{ ad.updatedAt|format_date('long') }}</td>
-                    <td>{{ ad.name }}</td>
-                    <td>{{ ad.topic.name }}</td>
-                    <td>
-                    {% if is_granted('VIEW', ad) %}
-                    <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('ad_read', { id: ad.id }) }}'">
-                        <img src="{{ asset('images/eye.svg') }}" alt="View" width="30" height="24">
-                        {{ 'action.view'|trans }}
-                    </button>
-                    {% endif %}
-                    {% if is_granted('EDIT', ad) %}
-                    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('ad_edit', { id: ad.id }) }}'">
-                        <img src="{{ asset('images/pencil-fill.svg') }}" alt="View" width="30" height="24">
-                        {{ 'action.edit'|trans }}
-                    </button>
-                    {% endif %}
-                    {% if is_granted('DELETE', ad) %}
-                    <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('ad_delete', { id: ad.id }) }}'">
-                        <img src="{{ asset('images/trash3.svg') }}" alt="View" width="30" height="24">
-                        {{ 'action.delete'|trans }}
-                    </button>
-                    {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'ad.id') }}</th>
+					<th>{{ knp_pagination_sortable(pagination, 'label.createdAt'|trans, 'ad.createdAt') }}</th>
+					<th>{{ knp_pagination_sortable(pagination, 'label.updatedAt'|trans, 'ad.updatedAt') }}</th>
+					{% if is_granted('ROLE_ADMIN') %}
+						<th>{{ knp_pagination_sortable(pagination, 'label.verified'|trans, 'ad.verified') }}</th>
+					{% endif %}
+					<th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'ad.name') }}</th>
+					<th>{{ knp_pagination_sortable(pagination, 'label.topic'|trans, 'topic.name') }}</th>
+					<th>{{ 'label.actions'|trans }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for ad in pagination.items %}
+					{% if ad.verified or is_granted('ROLE_ADMIN')%}
+						<tr>
+							<td {% if is_granted('ROLE_ADMIN') and not ad.verified %} style="background-color:hsl(10, 100%, 72%);" {% endif %}>{{ ad.id }}</td>
+							<td {% if is_granted('ROLE_ADMIN') and not ad.verified %} style="background-color:hsl(10, 100%, 72%);" {% endif %}>{{ ad.createdAt|format_date('long') }}</td>
+							<td {% if is_granted('ROLE_ADMIN') and not ad.verified %} style="background-color:hsl(10, 100%, 72%);" {% endif %}>{{ ad.updatedAt|format_date('long') }}</td>
+							{% if is_granted('ROLE_ADMIN') %}
+								<td {% if is_granted('ROLE_ADMIN') and not ad.verified %} style="background-color:hsl(10, 100%, 72%);" {% endif %}>
+									{{ ad.verified ? 'label.yes'|trans : 'label.no'|trans }}
+								</td>
+							{% endif %}
+							<td {% if is_granted('ROLE_ADMIN') and not ad.verified %} style="background-color:hsl(10, 100%, 72%);" {% endif %}>{{ ad.name }}</td>
+							<td {% if is_granted('ROLE_ADMIN') and not ad.verified %} style="background-color:hsl(10, 100%, 72%);" {% endif %}>
+								<a href="{{ path('ads_per_topic', { id: ad.topic.id }) }}">
+									{{ ad.topic.name }}
+								</a>
+							</td>
+							<td {% if is_granted('ROLE_ADMIN') and not ad.verified %} style="background-color:hsl(10, 100%, 72%);" {% endif %}>
+								{% if is_granted('AD_VIEW', ad) %}
+									<button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('ad_read', { id: ad.id }) }}'">
+										<img src="{{ asset('images/eye.svg') }}" alt="View" width="30" height="24">
+										{{ 'action.view'|trans }}
+									</button>
+								{% endif %}
+								{% if is_granted('AD_EDIT', ad) %}
+									<button type="button" class="btn btn-success" onclick="window.location.href='{{ path('ad_edit', { id: ad.id }) }}'">
+										<img src="{{ asset('images/pencil-fill.svg') }}" alt="View" width="30" height="24">
+										{{ 'action.edit'|trans }}
+									</button>
+								{% endif %}
+								{% if is_granted('AD_DELETE', ad) %}
+									<button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('ad_delete', { id: ad.id }) }}'">
+										<img src="{{ asset('images/trash3.svg') }}" alt="View" width="30" height="24">
+										{{ 'action.delete'|trans }}
+									</button>
+								{% endif %}
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
 
-        <div class="navigation text-center">
-            {{ knp_pagination_render(pagination) }}
-        </div>
+		<div class="navigation text-center">
+			{{ knp_pagination_render(pagination) }}
+		</div>
 
-    {% else %}
-        <p>
-            {{ 'message.empty_list'|trans }}
-        </p>
-    {% endif %}
+	{% else %}
+		<p>
+			{{ 'message.empty_list'|trans }}
+		</p>
+	{% endif %}
 {% endblock %}

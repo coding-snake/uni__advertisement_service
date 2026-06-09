@@ -9,13 +9,22 @@
 
         {% if tag is defined and tag|length %}
         <dl class="dl-horizontal">
+        
+            <dt>{{ 'label.author'|trans }}</dt>
+            <dd>
+            {% if tag.author %}
+                {{ tag.author.username }}
+            {% else %}
+                {{ 'message.added_by_guest'|trans }}
+            {% endif %}
+            </dd>
             <dt>{{ 'label.id'|trans }}</dt>
             <dd>{{ tag.id }}</dd>
             </dd>
             <dt>{{ 'label.createdAt'|trans }}</dt>
-            <dd>{{ tag.createdAt|date('Y/m/d') }}</dd>
+            <dd>{{ tag.createdAt|format_date('long') }}</dd>
             <dt>{{ 'label.updatedAt'|trans }}</dt>
-            <dd>{{ tag.updatedAt|date('Y/m/d') }}</dd>
+            <dd>{{ tag.updatedAt|format_date('long') }}</dd>
             <dt>{{ 'label.name'|trans }}</dt>
             <dd>{{  tag.name }}</dd>
         </dl>

@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.account_of'|trans({'%email%': app.user.email}) }}
+{% endblock %}
+{% block body %}
+    <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('change_password')}}'">{{ 'action.change_password'|trans }}</button>
+    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('change_username')}}'">{{ 'action.change_username'|trans }}</button>
+{% endblock %}

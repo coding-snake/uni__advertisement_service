@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Tag service interface
+ * Tag service interface.
  */
 
 namespace App\Service;
@@ -9,12 +10,12 @@ use App\Entity\Tag;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 
 /**
- * Interface TagServiceInterface
+ * Interface TagServiceInterface.
  */
 interface TagServiceInterface
 {
     /**
-     * Get paginated list
+     * Get paginated list.
      *
      * @param int $page Page number
      *

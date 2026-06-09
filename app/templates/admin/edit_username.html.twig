@@ -1,0 +1,8 @@
+{% block body %}
+    {% include 'base/_form.html.twig' with {
+        page_title: 'title.edit_username_of'|trans({'%email%': user.email}),
+        form: form,
+        submit_label: 'action.save'|trans,
+        back_to_list_path: 'admin_user_index',
+    } %}
+{% endblock %}

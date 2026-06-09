@@ -1,8 +1,7 @@
 <?php
 /**
- * Ad type.
+ * Ad Type
  */
-
 namespace App\Form\Type;
 
 use App\Entity\Ad;
@@ -17,7 +16,7 @@ use Symfony\Component\Form\FormTypeExtensionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class AdType.
+ * AdType
  */
 class AdType extends AbstractType
 {
@@ -38,41 +37,45 @@ class AdType extends AbstractType
             'name',
             TextType::class,
             [
-                'label' => 'label.title',
+                'label' => 'label.name',
                 'required' => true,
                 'attr' => ['max_length' => 64],
-            ])
+            ]
+        )
             ->add(
-            'content',
-            TextareaType::class,
-            [
-                'label' => 'label.content',
-                'required' => true,
-                'attr' => [
-                    'rows' => 6,
-                ],
-            ])
+                'content',
+                TextareaType::class,
+                [
+                    'label' => 'label.content',
+                    'required' => true,
+                    'attr' => [
+                        'rows' => 6,
+                    ],
+                ]
+            )
             ->add(
                 'topic',
                 EntityType::class,
                 [
                     'class' => Topic::class,
-                    'choice_label'=> 'name',
-                    'label' => 'label.category',
-                    'required' => true
-                ])
+                    'choice_label' => 'name',
+                    'label' => 'label.topic',
+                    'required' => true,
+                ]
+            )
             ->add(
                 'tags',
                 EntityType::class,
                 [
                     'class' => Tag::class,
-                    'choice_label'=> 'name',
+                    'choice_label' => 'name',
                     'multiple' => true,
                     'expanded' => true,
                     'label' => 'label.tags',
-                    'required' => false
-                ])
-            ;
+                    'required' => false,
+                ]
+            )
+        ;
     }
 
     /**

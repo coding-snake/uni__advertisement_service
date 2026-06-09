@@ -1,12 +1,12 @@
 <?php
 /**
- * Tag controller.
+ * Tag Controller
  */
-
 namespace App\Controller;
 
 use App\Entity\Tag;
 use App\Form\Type\TagType;
+use App\Security\Voter\TagVoter;
 use App\Service\TagServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -14,21 +14,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Class Controller.
- * 
- * @param TagServiceInterface $tagService Tag service
- * @param TranslatorInterface      $translator      Translator
+ * Class TagController.
  */
 #[Route('/tags')]
 class TagController extends AbstractController
 {
     /**
-     * Constructor
-     * 
+     * Constructor.
+     *
      * @param TagServiceInterface $tagService Tag service
+     * @param TranslatorInterface $translator Translator
      */
     public function __construct(private readonly TagServiceInterface $tagService, private readonly TranslatorInterface $translator)
     {
@@ -65,6 +64,7 @@ class TagController extends AbstractController
         requirements: ['id' => '[1-9]\d*'],
         methods: ['GET']
     )]
+    #[IsGranted(TagVoter::VIEW, subject: 'tag')]
     public function read(Tag $tag): Response
     {
         return $this->render(
@@ -85,9 +85,13 @@ class TagController extends AbstractController
         name: 'tag_create',
         methods: ['GET', 'POST']
     )]
+    #[IsGranted(TagVoter::CREATE)]
     public function create(Request $request): Response
     {
         $tag = new Tag();
+
+        $tag->setAuthor($this->getUser());
+
         $form = $this->createForm(TagType::class, $tag);
         $form->handleRequest($request);
 
@@ -111,8 +115,8 @@ class TagController extends AbstractController
     /**
      * Edit action.
      *
-     * @param Request  $request  HTTP request
-     * @param Tag $tag Tag entity
+     * @param Request $request HTTP request
+     * @param Tag     $tag     Tag entity
      *
      * @return Response HTTP response
      */
@@ -122,6 +126,7 @@ class TagController extends AbstractController
         requirements: ['id' => '[1-9]\d*'],
         methods: ['GET', 'PUT']
     )]
+    #[IsGranted(TagVoter::EDIT, subject: 'tag')]
     public function edit(Request $request, Tag $tag): Response
     {
         $form = $this->createForm(
@@ -147,7 +152,8 @@ class TagController extends AbstractController
 
         return $this->render(
             'tags/edit.html.twig',
-            [ 'form' => $form->createView(),
+            [
+                'form' => $form->createView(),
                 'tag' => $tag,
             ]
         );
@@ -156,8 +162,8 @@ class TagController extends AbstractController
     /**
      * Delete action.
      *
-     * @param Request  $request  HTTP request
-     * @param Tag $tag Tag entity
+     * @param Request $request HTTP request
+     * @param Tag     $tag     Tag entity
      *
      * @return Response HTTP response
      */
@@ -167,6 +173,7 @@ class TagController extends AbstractController
         requirements: ['id' => '[1-9]\d*'],
         methods: ['GET', 'DELETE']
     )]
+    #[IsGranted(TagVoter::DELETE, subject: 'tag')]
     public function delete(Request $request, Tag $tag): Response
     {
         $form = $this->createForm(FormType::class, $tag, [
@@ -194,5 +201,4 @@ class TagController extends AbstractController
             ]
         );
     }
-               
 }

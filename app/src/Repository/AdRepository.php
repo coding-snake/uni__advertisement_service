@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Ad Repository
+ */
 namespace App\Repository;
 
 use App\Entity\Ad;
@@ -91,5 +93,4 @@ class AdRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
-
 }

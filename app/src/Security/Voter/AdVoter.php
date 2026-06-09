@@ -6,9 +6,10 @@
 
 namespace App\Security\Voter;
 
-use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use App\Entity\Ad;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -17,90 +18,86 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 final class AdVoter extends Voter
 {
-    /**
-     * Delete permission.
-     *
-     * @var string
-     */
+    public const CREATE = 'AD_CREATE';
     public const DELETE = 'AD_DELETE';
-
-    /**
-     * Edit permission.
-     *
-     * @var string
-     */
     public const EDIT = 'AD_EDIT';
-
-    /**
-     * View permission.
-     *
-     * @var string
-     */
     public const VIEW = 'AD_VIEW';
 
     /**
-     * Determines if this voter supports the attribute and subject.
+     * Constructor.
+     *
+     * @param Security $security Security helper
+     */
+    public function __construct(private readonly Security $security)
+    {
+    }
+
+    /**
+     * Determines if the attribute and subject are supported by this voter.
      *
      * @param string $attribute An attribute
-     * @param mixed  $subject   The subject to secure, e.g. an object the user wants to access or any other PHP type
+     * @param mixed  $subject   The subject to secure
      *
-     * @return bool Result
+     * @return bool True if the attribute and subject are supported, false otherwise
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::DELETE, self::EDIT, self::VIEW])
-            && $subject instanceof Ad;
+        if (self::CREATE === $attribute) {
+            return true;
+        }
+
+        return in_array(
+            $attribute,
+            [self::VIEW, self::EDIT, self::DELETE],
+            true
+        ) && $subject instanceof Ad;
     }
 
     /**
      * Perform a single access check operation on a given attribute, subject and token.
-     * It is safe to assume that $attribute and $subject already passed the "supports()" method check.
      *
-     * @param string         $attribute Permission name
-     * @param mixed          $subject   Object
-     * @param TokenInterface $token     Security token
-     * @param Vote|null      $vote      Vote object
+     * @param string         $attribute An attribute
+     * @param mixed          $subject   The subject to secure
+     * @param TokenInterface $token     A TokenInterface instance
+     * @param Vote|null      $vote      The vote object
      *
-     * @return bool Vote result
+     * @return bool True if the vote is granted, false otherwise
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
-            return false;
+        if (self::CREATE === $attribute) {
+            return true;
         }
+
         if (!$subject instanceof Ad) {
             return false;
         }
 
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
+        if (!$subject->getVerified()) {
+            return false;
+        }
+
+        $user = $token->getUser();
+
         return match ($attribute) {
-            self::EDIT => $this->canEdit($subject, $user),
-            self::DELETE => $this->canDelete($subject, $user),
-            self::VIEW => $this->canView($subject, $user),
+            self::VIEW => true,
+            self::EDIT => ($user instanceof UserInterface) && $this->canEdit($subject, $user),
+            self::DELETE => ($user instanceof UserInterface) && $this->canDelete($subject, $user),
             default => false,
         };
     }
 
     /**
-     * Checks if user can delete ad.
+     * Checks if user can edit the ad.
      *
-     * @param Ad          $ad Ad entity
-     * @param UserInterface $user User
+     * @param Ad            $ad   Ad entity
+     * @param UserInterface $user User interface
      *
-     * @return bool Result
-     */
-    private function canDelete(Ad $ad, UserInterface $user): bool
-    {
-        return $ad->getAuthor() === $user;
-    }
-
-    /**
-     * Checks if user can edit ad.
-     *
-     * @param Ad          $ad ad entity
-     * @param UserInterface $user User
-     *
-     * @return bool Result
+     * @return bool True if user can edit, false otherwise
      */
     private function canEdit(Ad $ad, UserInterface $user): bool
     {
@@ -108,14 +105,14 @@ final class AdVoter extends Voter
     }
 
     /**
-     * Checks if a user can view an ad.
+     * Checks if user can delete the ad.
      *
-     * @param Ad          $ad Ad entity
-     * @param UserInterface $user User
+     * @param Ad            $ad   Ad entity
+     * @param UserInterface $user User interface
      *
-     * @return bool Result
+     * @return bool True if user can delete, false otherwise
      */
-    private function canView(Ad $ad, UserInterface $user): bool
+    private function canDelete(Ad $ad, UserInterface $user): bool
     {
         return $ad->getAuthor() === $user;
     }

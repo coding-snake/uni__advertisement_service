@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.homepage'|trans }}
+{% endblock %}
+{% block body %}
+{% if app.user %}
+    <h1>{{ 'label.welcome_user'|trans({'%email%': app.user.email|default('')}) }}</h1>
+    <br>
+    <button type="button" class="btn btn-danger" onclick="window.location.href='{{ path('app_logout')}}'">{{ 'action.logout'|trans }}</button>
+
+{% else %}
+    <button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('app_login')}}'">{{ 'action.login'|trans }}</button>
+    <button type="button" class="btn btn-success" onclick="window.location.href='{{ path('app_register')}}'">{{ 'action.register'|trans }}</button>
+{% endif %}
+{% endblock %}

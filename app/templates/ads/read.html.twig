@@ -9,6 +9,32 @@
 
         {% if ad is defined and ad|length %}
         <dl class="dl-horizontal">
+            <dt>{{ 'label.author'|trans }}</dt>
+            <dd>
+            {% if ad.author %}
+                {{ ad.author.username }}
+            {% else %}
+                {{ 'message.added_by_guest'|trans }}
+            {% endif %}
+            </dd>
+            {% if is_granted('ROLE_ADMIN') %}
+            <dt>{{'label.verification'|trans}}</dt>
+            <dd>
+                {{ ad.verified ? 'label.yes'|trans : 'label.no'|trans }}
+            <br><br>
+            <form method="post"
+                action="{{ path('ad_toggle_verification', {'id': ad.id}) }}"
+                style="display:inline">
+
+                <button type="submit" class="btn btn-primary">
+                    {{ 'action.change_verification'|trans }}
+                </button>
+
+            </form>
+            
+            </dd>
+            {% endif %}
+
             <dt>{{ 'label.id'|trans }}</dt>
             <dd>{{ ad.id }}</dd>
             <dt>{{ 'label.tags'|trans }}</dt>
@@ -18,9 +44,9 @@
             {% endfor %}
             </dd>
             <dt>{{ 'label.createdAt'|trans }}</dt>
-            <dd>{{ ad.createdAt|date('Y/m/d') }}</dd>
+            <dd>{{ ad.createdAt|format_date('long') }}</dd>
             <dt>{{ 'label.updatedAt'|trans }}</dt>
-            <dd>{{ ad.updatedAt|date('Y/m/d') }}</dd>
+            <dd>{{ ad.updatedAt|format_date('long') }}</dd>
             <dt>{{ 'label.name'|trans }}</dt>
             <dd>{{  ad.name }}</dd>
             <dt>{{ 'label.topic'|trans }}</dt>
@@ -28,6 +54,8 @@
             <dt>{{ 'label.content'|trans }}</dt>
             <dd>{{  ad.content }}</dd>
         </dl>
+    <br>
+
     {% else %}
         <p>
             {{ 'message.ad_not_found'|trans }}

@@ -26,15 +26,16 @@ class TopicService implements TopicServiceInterface
      * of specifying them in app/config/config.yml.
      * See https://symfony.com/doc/current/best_practices.html#configuration
      *
-     * @constant int
+     * @varant int
      */
     private const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * Constructor.
      *
-     * @param TopicRepository $topicRepository Topic repository
-     * @param PaginatorInterface $paginator Paginator
+     * @param TopicRepository    $topicRepository Topic repository
+     * @param PaginatorInterface $paginator       Paginator
+     * @param AdRepository       $adRepository    Repository of ads
      */
     public function __construct(private readonly TopicRepository $topicRepository, private readonly PaginatorInterface $paginator, private readonly AdRepository $adRepository)
     {
