@@ -12,7 +12,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class HomeController.
  */
-#[Route('/')]
 class HomeController extends AbstractController
 {
     /**
@@ -30,6 +29,7 @@ class HomeController extends AbstractController
      * @return Response HTTP response
      */
     #[Route(
+        '/',
         name: 'home',
         methods: ['GET']
     )]
