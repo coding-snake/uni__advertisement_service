@@ -14,7 +14,9 @@ return RectorConfig::configure()
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
-
+    ->withSkip([
+        __DIR__ . '/tests/Repository/UserRepositoryTest.php',
+    ])
     ->withParallel()
     ->withPhpVersion(80500)
 

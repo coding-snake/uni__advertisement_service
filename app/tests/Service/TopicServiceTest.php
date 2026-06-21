@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Topic service tests.
  */
 
 namespace App\Tests\Service;
 
+use Doctrine\ORM\NoResultException;
 use App\Entity\Topic;
 use App\Repository\AdRepository;
 use App\Repository\TopicRepository;
@@ -19,49 +21,49 @@ use PHPUnit\Framework\TestCase;
  */
 class TopicServiceTest extends TestCase
 {
-    private TopicRepository|MockObject $topic_repository;
-    private AdRepository|MockObject $ad_repository;
+    private TopicRepository|MockObject $topicRepository;
+    private AdRepository|MockObject $adRepository;
     private PaginatorInterface|MockObject $paginator;
-    private TopicService $topic_service;
+    private TopicService $topicService;
 
     /**
      * Set up tests.
      */
     protected function setUp(): void
     {
-        $this->topic_repository = $this->createMock(TopicRepository::class);
-        $this->ad_repository = $this->createMock(AdRepository::class);
+        $this->topicRepository = $this->createMock(TopicRepository::class);
+        $this->adRepository = $this->createMock(AdRepository::class);
         $this->paginator = $this->createMock(PaginatorInterface::class);
 
-        $this->topic_service = new TopicService(
-            $this->topic_repository,
+        $this->topicService = new TopicService(
+            $this->topicRepository,
             $this->paginator,
-            $this->ad_repository
+            $this->adRepository
         );
     }
 
     /**
      * Test get paginated list.
      */
-    public function test_get_paginated_list(): void
+    public function testGetPaginatedList(): void
     {
         try {
             // given
             $page = 1;
-            $expected_result = $this->createMock(PaginationInterface::class);
+            $expectedResult = $this->createMock(PaginationInterface::class);
 
-            $this->topic_repository->expects($this->once())
+            $this->topicRepository->expects($this->once())
                 ->method('queryAll');
 
             $this->paginator->expects($this->once())
                 ->method('paginate')
-                ->willReturn($expected_result);
+                ->willReturn($expectedResult);
 
             // when
-            $result = $this->topic_service->getPaginatedList($page);
+            $result = $this->topicService->getPaginatedList($page);
 
             // then
-            $this->assertSame($expected_result, $result);
+            $this->assertSame($expectedResult, $result);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -74,18 +76,18 @@ class TopicServiceTest extends TestCase
     /**
      * Test save new topic.
      */
-    public function test_save_new_topic_sets_dates(): void
+    public function testSaveNewTopicSetsDates(): void
     {
         try {
             // given
             $topic = new Topic();
 
-            $this->topic_repository->expects($this->once())
+            $this->topicRepository->expects($this->once())
                 ->method('save')
                 ->with($topic);
 
             // when
-            $this->topic_service->save($topic);
+            $this->topicService->save($topic);
 
             // then
             $this->assertNotNull($topic->getCreatedAt());
@@ -102,18 +104,18 @@ class TopicServiceTest extends TestCase
     /**
      * Test delete.
      */
-    public function test_delete(): void
+    public function testDelete(): void
     {
         try {
             // given
             $topic = new Topic();
 
-            $this->topic_repository->expects($this->once())
+            $this->topicRepository->expects($this->once())
                 ->method('delete')
                 ->with($topic);
 
             // when
-            $this->topic_service->delete($topic);
+            $this->topicService->delete($topic);
 
             // then
         } catch (\Exception $e) {
@@ -128,19 +130,19 @@ class TopicServiceTest extends TestCase
     /**
      * Test can be deleted true.
      */
-    public function test_can_be_deleted_returns_true_when_no_ads_exist(): void
+    public function testCanBeDeletedReturnsTrueWhenNoAdsExist(): void
     {
         try {
             // given
             $topic = new Topic();
 
-            $this->ad_repository->expects($this->once())
+            $this->adRepository->expects($this->once())
                 ->method('countByTopic')
                 ->with($topic)
                 ->willReturn(0);
 
             // when
-            $result = $this->topic_service->canBeDeleted($topic);
+            $result = $this->topicService->canBeDeleted($topic);
 
             // then
             $this->assertTrue($result);
@@ -156,19 +158,19 @@ class TopicServiceTest extends TestCase
     /**
      * Test can be deleted false.
      */
-    public function test_can_be_deleted_returns_false_when_ads_exist(): void
+    public function testCanBeDeletedReturnsFalseWhenAdsExist(): void
     {
         try {
             // given
             $topic = new Topic();
 
-            $this->ad_repository->expects($this->once())
+            $this->adRepository->expects($this->once())
                 ->method('countByTopic')
                 ->with($topic)
                 ->willReturn(5);
 
             // when
-            $result = $this->topic_service->canBeDeleted($topic);
+            $result = $this->topicService->canBeDeleted($topic);
 
             // then
             $this->assertFalse($result);
@@ -184,18 +186,18 @@ class TopicServiceTest extends TestCase
     /**
      * Test can be deleted exception.
      */
-    public function test_can_be_deleted_returns_false_on_exception(): void
+    public function testCanBeDeletedReturnsFalseOnException(): void
     {
         try {
             // given
             $topic = new Topic();
 
-            $this->ad_repository->expects($this->once())
+            $this->adRepository->expects($this->once())
                 ->method('countByTopic')
-                ->willThrowException(new \Doctrine\ORM\NoResultException());
+                ->willThrowException(new NoResultException());
 
             // when
-            $result = $this->topic_service->canBeDeleted($topic);
+            $result = $this->topicService->canBeDeleted($topic);
 
             // then
             $this->assertFalse($result);

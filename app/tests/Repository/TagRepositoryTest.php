@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tag repository tests.
  */
@@ -15,8 +16,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 class TagRepositoryTest extends KernelTestCase
 {
-    private ?EntityManagerInterface $entity_manager;
-    private ?TagRepository $tag_repository;
+    private ?EntityManagerInterface $entityManager;
+    private ?TagRepository $tagRepository;
 
     /**
      * Set up tests.
@@ -27,14 +28,14 @@ class TagRepositoryTest extends KernelTestCase
 
         $container = static::getContainer();
 
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
-        $this->tag_repository = $this->entity_manager->getRepository(Tag::class);
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
+        $this->tagRepository = $this->entityManager->getRepository(Tag::class);
     }
 
     /**
      * Test save.
      */
-    public function test_save(): void
+    public function testSave(): void
     {
         try {
             // given
@@ -42,10 +43,10 @@ class TagRepositoryTest extends KernelTestCase
             $tag->setName('tag_name');
 
             // when
-            $this->tag_repository->save($tag);
+            $this->tagRepository->save($tag);
 
             // then
-            $result = $this->tag_repository->find($tag->getId());
+            $result = $this->tagRepository->find($tag->getId());
 
             $this->assertNotNull($result);
             $this->assertEquals('tag_name', $result->getName());
@@ -61,24 +62,24 @@ class TagRepositoryTest extends KernelTestCase
     /**
      * Test delete.
      */
-    public function test_delete(): void
+    public function testDelete(): void
     {
         try {
             // given
             $tag = new Tag();
             $tag->setName('tag_name');
 
-            $this->entity_manager->persist($tag);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($tag);
+            $this->entityManager->flush();
 
             $id = $tag->getId();
 
             // when
-            $this->tag_repository->delete($tag);
+            $this->tagRepository->delete($tag);
 
             // then
             $this->assertNull(
-                $this->tag_repository->find($id)
+                $this->tagRepository->find($id)
             );
         } catch (\Exception $e) {
             dd([
@@ -92,18 +93,18 @@ class TagRepositoryTest extends KernelTestCase
     /**
      * Test query all.
      */
-    public function test_query_all(): void
+    public function testQueryAll(): void
     {
         try {
             // given
             $tag = new Tag();
             $tag->setName('tag_name');
 
-            $this->entity_manager->persist($tag);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($tag);
+            $this->entityManager->flush();
 
             // when
-            $result = $this->tag_repository
+            $result = $this->tagRepository
                 ->queryAll()
                 ->getQuery()
                 ->getResult();

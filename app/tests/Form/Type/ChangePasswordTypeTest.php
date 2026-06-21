@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Change password type tests.
  */
@@ -17,23 +18,13 @@ use Symfony\Component\Validator\Validation;
 class ChangePasswordTypeTest extends TypeTestCase
 {
     /**
-     * Add to pass the whole builder correctly.
-     */
-    protected function getExtensions(): array
-    {
-        return [
-            new ValidatorExtension(Validation::createValidator()),
-        ];
-    }
-
-    /**
      * Test build form.
      */
-    public function test_build_form(): void
+    public function testBuildForm(): void
     {
         try {
             // given
-            $form_data = [
+            $formData = [
                 'plainPassword' => [
                     'first' => 'password_1',
                     'second' => 'password_1',
@@ -43,7 +34,7 @@ class ChangePasswordTypeTest extends TypeTestCase
             $form = $this->factory->create(ChangePasswordType::class);
 
             // when
-            $form->submit($form_data);
+            $form->submit($formData);
 
             // then
             $this->assertTrue($form->isSynchronized());
@@ -61,11 +52,11 @@ class ChangePasswordTypeTest extends TypeTestCase
     /**
      * Test password conflict.
      */
-    public function test_password_conflict(): void
+    public function testPasswordConflict(): void
     {
         try {
             // given
-            $form_data = [
+            $formData = [
                 'plainPassword' => [
                     'first' => 'password_1',
                     'second' => 'password_2',
@@ -75,7 +66,7 @@ class ChangePasswordTypeTest extends TypeTestCase
             $form = $this->factory->create(ChangePasswordType::class);
 
             // when
-            $form->submit($form_data);
+            $form->submit($formData);
 
             // then
             $this->assertFalse($form->isValid());
@@ -91,7 +82,7 @@ class ChangePasswordTypeTest extends TypeTestCase
     /**
      * Test configure options.
      */
-    public function test_configure_options(): void
+    public function testConfigureOptions(): void
     {
         try {
             // given
@@ -102,8 +93,8 @@ class ChangePasswordTypeTest extends TypeTestCase
             $type->configureOptions($resolver);
 
             // then
-            $resolved_options = $resolver->resolve();
-            $this->assertIsArray($resolved_options);
+            $resolvedOptions = $resolver->resolve();
+            $this->assertIsArray($resolvedOptions);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -111,5 +102,17 @@ class ChangePasswordTypeTest extends TypeTestCase
                 'Line'  => $e->getLine(),
             ]);
         }
+    }
+
+    /**
+     * Add to pass the whole builder correctly.
+     *
+     * @return array<int, ValidatorExtension>
+     */
+    protected function getExtensions(): array
+    {
+        return [
+            new ValidatorExtension(Validation::createValidator()),
+        ];
     }
 }

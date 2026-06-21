@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ad entity tests.
  */
@@ -19,7 +20,7 @@ class AdTest extends TestCase
     /**
      * Test get and set.
      */
-    public function test_get_and_set(): void
+    public function testGetAndSet(): void
     {
         try {
             // given
@@ -59,7 +60,7 @@ class AdTest extends TestCase
     /**
      * Test tag interactions.
      */
-    public function test_tag_interactions(): void
+    public function testTagInteractions(): void
     {
         try {
             // given

@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Topic Entity
+ * Topic Entity.
  */
+
 namespace App\Entity;
 
 use App\Repository\TopicRepository;

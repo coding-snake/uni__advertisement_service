@@ -1,12 +1,22 @@
 <?php
 
+/**
+ * User role tests.
+ */
+
 namespace App\Tests\Entity\Enum;
 
 use App\Entity\Enum\UserRole;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class UserRoleTest.
+ */
 class UserRoleTest extends TestCase
 {
+    /**
+     * Test label returns correct translation key.
+     */
     public function testLabelReturnsCorrectTranslationKey(): void
     {
         // given
@@ -19,6 +29,9 @@ class UserRoleTest extends TestCase
         $this->assertSame('label.role_admin', $adminLabel);
     }
 
+    /**
+     * Test enum backed values.
+     */
     public function testEnumBackedValues(): void
     {
         // given

@@ -342,6 +342,14 @@
         <source>label.username</source>
         <target>Username</target>
       </trans-unit>
+      <trans-unit id="label.password">
+        <source>label.password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="title.login_now">
+        <source>title.login_now</source>
+        <target>Login</target>
+      </trans-unit>
       <trans-unit id="title.change_password_of">
         <source>title.change_password_of</source>
         <target>Change password of %email%</target>

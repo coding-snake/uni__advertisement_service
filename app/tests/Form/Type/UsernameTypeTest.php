@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Username type tests.
  */
@@ -17,25 +18,14 @@ use Symfony\Component\Validator\Validation;
  */
 class UsernameTypeTest extends TypeTestCase
 {
-    
-    /**
-     * Add to pass the whole builder correctly.
-     */
-    protected function getExtensions(): array
-    {
-        return [
-            new ValidatorExtension(Validation::createValidator()),
-        ];
-    }
-
     /**
      * Test build form.
      */
-    public function test_build_form(): void
+    public function testBuildForm(): void
     {
         try {
             // given
-            $form_data = [
+            $formData = [
                 'username' => 'test',
             ];
 
@@ -43,7 +33,7 @@ class UsernameTypeTest extends TypeTestCase
             $form = $this->factory->create(UsernameType::class, $user);
 
             // when
-            $form->submit($form_data);
+            $form->submit($formData);
 
             // then
             $this->assertTrue($form->isSynchronized());
@@ -61,7 +51,7 @@ class UsernameTypeTest extends TypeTestCase
     /**
      * Test configure options.
      */
-    public function test_configure_options(): void
+    public function testConfigureOptions(): void
     {
         try {
             // given
@@ -72,8 +62,8 @@ class UsernameTypeTest extends TypeTestCase
             $type->configureOptions($resolver);
 
             // then
-            $resolved_options = $resolver->resolve();
-            $this->assertEquals(User::class, $resolved_options['data_class']);
+            $resolvedOptions = $resolver->resolve();
+            $this->assertEquals(User::class, $resolvedOptions['data_class']);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -81,5 +71,17 @@ class UsernameTypeTest extends TypeTestCase
                 'Line'  => $e->getLine(),
             ]);
         }
+    }
+
+    /**
+     * Add to pass the whole builder correctly.
+     *
+     * @return array<int, ValidatorExtension>
+     */
+    protected function getExtensions(): array
+    {
+        return [
+            new ValidatorExtension(Validation::createValidator()),
+        ];
     }
 }

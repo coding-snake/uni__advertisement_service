@@ -1,7 +1,9 @@
 <?php
+
 /**
- * User Entity
+ * User Entity.
  */
+
 namespace App\Entity;
 
 use App\Entity\Enum\UserRole;

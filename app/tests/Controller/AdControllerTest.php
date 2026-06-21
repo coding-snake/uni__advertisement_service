@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ad controller tests.
  */
@@ -21,9 +22,12 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class AdControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
-    private ?EntityManagerInterface $entity_manager;
-    private ?AdServiceInterface $ad_service;
+    private ?EntityManagerInterface $entityManager;
+    private ?AdServiceInterface $adService;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,39 +35,39 @@ class AdControllerTest extends WebTestCase
         $this->client = static::createClient();
 
         $container = static::getContainer();
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
-        $this->ad_service = $container->get(AdService::class);
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
+        $this->adService = $container->get(AdService::class);
     }
 
     /**
      * Test '/ads' route.
      */
-    public function test_ad_page_render_default(): void
+    public function testAdPageRenderDefault(): void
     {
         $this->client->request('GET', '/ads', ['page' => 1]);
 
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
+        $responseContent = $this->client->getResponse()->getContent();
 
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test '/ads/topics/{id}/ads' route.
      */
-    public function test_ads_per_topic_page_render(): void
+    public function testAdsPerTopicPageRender(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_1');
         $user->setUsername('test_user');
-        $this->entity_manager->persist($user);
+        $this->entityManager->persist($user);
 
         $topic = new Topic();
         $topic->setName('topic_name');
-        $this->entity_manager->persist($topic);
+        $this->entityManager->persist($topic);
 
         $ad = new Ad();
         $now = new \DateTimeImmutable();
@@ -73,43 +77,43 @@ class AdControllerTest extends WebTestCase
         $ad->setUpdatedAt($now);
         $ad->setAuthor($user);
         $ad->setTopic($topic);
-        $this->entity_manager->persist($ad);
+        $this->entityManager->persist($ad);
 
-        $this->entity_manager->flush();
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
 
-        $this->client->request('GET', '/ads/topics/' . $topic->getId() . '/ads');
+        $this->client->request('GET', '/ads/topics/'.$topic->getId().'/ads');
 
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('ad_name', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('ad_name', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test '/tags/{id}/ads' route.
      */
-    public function test_ads_per_tag_page_render(): void
+    public function testAdsPerTagPageRender(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_1');
         $user->setUsername('test_user');
-        $this->entity_manager->persist($user);
+        $this->entityManager->persist($user);
 
         $topic = new Topic();
         $topic->setName('topic_name');
-        $this->entity_manager->persist($topic);
+        $this->entityManager->persist($topic);
 
         $tag = new Tag();
         $tag->setName('tag_name');
         $tag->setSlug('tag_slug');
         $tag->setAuthor($user);
-        $this->entity_manager->persist($tag);
+        $this->entityManager->persist($tag);
 
         $ad = new Ad();
         $now = new \DateTimeImmutable();
@@ -121,36 +125,36 @@ class AdControllerTest extends WebTestCase
         $ad->setTopic($topic);
         $ad->addTag($tag);
 
-        $this->entity_manager->persist($ad);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($ad);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
 
-        $this->client->request('GET', '/ads/tags/' . $tag->getId() . '/ads');
+        $this->client->request('GET', '/ads/tags/'.$tag->getId().'/ads');
 
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('ad_name', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('ad_name', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test '/ads/{id}' route.
      */
-    public function test_ad_page_render_read(): void
+    public function testAdPageRenderRead(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_1');
         $user->setUsername('test_user');
-        $this->entity_manager->persist($user);
+        $this->entityManager->persist($user);
 
         $topic = new Topic();
         $topic->setName('topic_name');
-        $this->entity_manager->persist($topic);
+        $this->entityManager->persist($topic);
 
         $ad = new Ad();
         $now = new \DateTimeImmutable();
@@ -161,37 +165,37 @@ class AdControllerTest extends WebTestCase
         $ad->setAuthor($user);
         $ad->setTopic($topic);
         $ad->setVerified(true);
-        $this->entity_manager->persist($ad);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($ad);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
 
-        $this->client->request('GET', '/ads/' . $ad->getId());
+        $this->client->request('GET', '/ads/'.$ad->getId());
 
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('ad_content', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('ad_content', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test '/ads/{id}/toggle-verification' route (Admin only).
      */
-    public function test_ad_toggle_verification(): void
+    public function testAdToggleVerification(): void
     {
         $admin = new User();
         $admin->setEmail('admin@example.com');
         $admin->setPassword('password_1');
         $admin->setUsername('admin_user');
         $admin->setRoles(['ROLE_ADMIN']);
-        $this->entity_manager->persist($admin);
+        $this->entityManager->persist($admin);
 
         $topic = new Topic();
         $topic->setName('topic_name');
-        $this->entity_manager->persist($topic);
+        $this->entityManager->persist($topic);
 
         $ad = new Ad();
         $ad->setName('ad_name');
@@ -201,44 +205,44 @@ class AdControllerTest extends WebTestCase
         $ad->setAuthor($admin);
         $ad->setTopic($topic);
         $ad->setVerified(false);
-        $this->entity_manager->persist($ad);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($ad);
+        $this->entityManager->flush();
 
         $this->client->loginUser($admin);
         $this->client->catchExceptions(false);
 
-        $this->client->request('POST', '/ads/' . $ad->getId() . '/toggle-verification');
+        $this->client->request('POST', '/ads/'.$ad->getId().'/toggle-verification');
 
-        $this->assertResponseRedirects('/ads/' . $ad->getId());
+        $this->assertResponseRedirects('/ads/'.$ad->getId());
 
-        $this->entity_manager->clear();
-        $updated_ad = $this->entity_manager->getRepository(Ad::class)->find($ad->getId());
+        $this->entityManager->clear();
+        $updatedAd = $this->entityManager->getRepository(Ad::class)->find($ad->getId());
 
-        $this->assertTrue($updated_ad->getVerified());
+        $this->assertTrue($updatedAd->getVerified());
     }
 
     /**
      * Test create success — logged user.
      */
-    public function test_ad_create_success(): void
+    public function testAdCreateSuccess(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_1');
         $user->setUsername('test_user');
-        $this->entity_manager->persist($user);
+        $this->entityManager->persist($user);
 
         $topic = new Topic();
         $topic->setName('topic_name');
-        $this->entity_manager->persist($topic);
+        $this->entityManager->persist($topic);
 
         $tag = new Tag();
         $tag->setName('tag_name');
         $tag->setSlug('tag_slug');
         $tag->setAuthor($user);
-        $this->entity_manager->persist($tag);
+        $this->entityManager->persist($tag);
 
-        $this->entity_manager->flush();
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
@@ -255,48 +259,48 @@ class AdControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 
-        $this->entity_manager->clear();
-        $saved_ad = $this->entity_manager->getRepository(Ad::class)->findOneBy(['name' => 'ad_name']);
+        $this->entityManager->clear();
+        $savedAd = $this->entityManager->getRepository(Ad::class)->findOneBy(['name' => 'ad_name']);
 
-        $this->assertNotNull($saved_ad);
-        $this->assertTrue($saved_ad->getVerified());
-        $this->assertEquals('test_user', $saved_ad->getAuthor()->getUsername());
+        $this->assertNotNull($savedAd);
+        $this->assertTrue($savedAd->getVerified());
+        $this->assertEquals('test_user', $savedAd->getAuthor()->getUsername());
     }
 
     /**
      * Test ad create redirect when no topics exist.
      */
-    public function test_ad_create_redirect_when_no_topics_exist(): void
+    public function testAdCreateRedirectWhenNoTopicsExist(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_1');
         $user->setUsername('test_user');
-        $this->entity_manager->persist($user);
-        $this->entity_manager->flush();
-        
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
         $this->client->loginUser($user);
 
-        $topic_repository = $this->entity_manager->getRepository(Topic::class);
-        $this->assertEquals(0, $topic_repository->count([]));
-        
+        $topicRepository = $this->entityManager->getRepository(Topic::class);
+        $this->assertEquals(0, $topicRepository->count([]));
+
         $this->client->request('GET', '/ads/create');
 
         $router = static::getContainer()->get('router');
-        $expected_path = $router->generate('topic_create');
+        $expectedPath = $router->generate('topic_create');
 
-        $this->assertResponseRedirects($expected_path);
+        $this->assertResponseRedirects($expectedPath);
     }
-    
+
     /**
      * Test ad create sets verified to false for anonymous users.
      */
-    public function test_ad_create_unverified_for_anonymous_user(): void
+    public function testAdCreateUnverifiedForAnonymousUser(): void
     {
         $topic = new Topic();
         $topic->setName('topic_name');
-        $this->entity_manager->persist($topic);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($topic);
+        $this->entityManager->flush();
 
         $this->client->request('GET', '/ads/create');
 
@@ -306,29 +310,29 @@ class AdControllerTest extends WebTestCase
             'ad[topic]'   => (string) $topic->getId(),
         ]);
 
-        $this->entity_manager->clear();
-        $saved_ad = $this->entity_manager->getRepository(Ad::class)->findOneBy(['name' => 'anonymous_ad']);
+        $this->entityManager->clear();
+        $savedAd = $this->entityManager->getRepository(Ad::class)->findOneBy(['name' => 'anonymous_ad']);
 
-        $this->assertNotNull($saved_ad);
-        $this->assertFalse($saved_ad->getVerified());
-        $this->assertNull($saved_ad->getAuthor());
+        $this->assertNotNull($savedAd);
+        $this->assertFalse($savedAd->getVerified());
+        $this->assertNull($savedAd->getAuthor());
     }
 
     /**
      * Test edit.
      */
-    public function test_ad_edit_success(): void
+    public function testAdEditSuccess(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_1');
         $user->setUsername('test_user');
         $user->setRoles(['ROLE_ADMIN']);
-        $this->entity_manager->persist($user);
+        $this->entityManager->persist($user);
 
         $topic = new Topic();
         $topic->setName('topic_name');
-        $this->entity_manager->persist($topic);
+        $this->entityManager->persist($topic);
 
         $ad = new Ad();
         $ad->setName('ad_1');
@@ -337,13 +341,13 @@ class AdControllerTest extends WebTestCase
         $ad->setUpdatedAt(new \DateTimeImmutable());
         $ad->setAuthor($user);
         $ad->setTopic($topic);
-        $this->entity_manager->persist($ad);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($ad);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
 
-        $this->client->request('GET', '/ads/' . $ad->getId() . '/edit');
+        $this->client->request('GET', '/ads/'.$ad->getId().'/edit');
         $this->assertResponseIsSuccessful();
 
         $this->client->submitForm('form-submit-button', [
@@ -353,32 +357,32 @@ class AdControllerTest extends WebTestCase
         ]);
 
         $router = static::getContainer()->get('router');
-        $expected_path = $router->generate('ad_index');
-        $this->assertResponseRedirects($expected_path);
+        $expectedPath = $router->generate('ad_index');
+        $this->assertResponseRedirects($expectedPath);
         $this->client->followRedirect();
 
-        $this->entity_manager->clear();
-        $updated_ad = $this->entity_manager->getRepository(Ad::class)->find($ad->getId());
+        $this->entityManager->clear();
+        $updatedAd = $this->entityManager->getRepository(Ad::class)->find($ad->getId());
 
-        $this->assertEquals('ad_2', $updated_ad->getName());
-        $this->assertEquals('content_2', $updated_ad->getContent());
+        $this->assertEquals('ad_2', $updatedAd->getName());
+        $this->assertEquals('content_2', $updatedAd->getContent());
     }
 
     /**
      * Test delete.
      */
-    public function test_ad_delete_success(): void
+    public function testAdDeleteSuccess(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_1');
         $user->setUsername('test_user');
         $user->setRoles(['ROLE_ADMIN']);
-        $this->entity_manager->persist($user);
+        $this->entityManager->persist($user);
 
         $topic = new Topic();
         $topic->setName('topic_name');
-        $this->entity_manager->persist($topic);
+        $this->entityManager->persist($topic);
 
         $ad = new Ad();
         $ad->setName('ad_name');
@@ -387,19 +391,19 @@ class AdControllerTest extends WebTestCase
         $ad->setUpdatedAt(new \DateTimeImmutable());
         $ad->setAuthor($user);
         $ad->setTopic($topic);
-        $this->entity_manager->persist($ad);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($ad);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
 
-        $crawler = $this->client->request('GET', '/ads/' . $ad->getId() . '/delete');
+        $crawler = $this->client->request('GET', '/ads/'.$ad->getId().'/delete');
         $form = $crawler->selectButton('form-submit-button')->form();
         $this->client->submit($form);
 
         $router = static::getContainer()->get('router');
-        $expected_path = $router->generate('ad_index');
-        $this->assertResponseRedirects($expected_path);
+        $expectedPath = $router->generate('ad_index');
+        $this->assertResponseRedirects($expectedPath);
         $this->client->followRedirect();
     }
 }

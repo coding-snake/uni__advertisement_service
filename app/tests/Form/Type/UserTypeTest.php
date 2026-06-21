@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User type tests.
  */
@@ -18,23 +19,13 @@ use Symfony\Component\Validator\Validation;
 class UserTypeTest extends TypeTestCase
 {
     /**
-     * Add to pass the whole builder correctly.
-     */
-    protected function getExtensions(): array
-    {
-        return [
-            new ValidatorExtension(Validation::createValidator()),
-        ];
-    }
-
-    /**
      * Test build form.
      */
-    public function test_build_form(): void
+    public function testBuildForm(): void
     {
         try {
             // given
-            $form_data = [
+            $formData = [
                 'email' => 'test@example.com',
                 'username' => 'test',
                 'password' => [
@@ -47,7 +38,7 @@ class UserTypeTest extends TypeTestCase
             $form = $this->factory->create(UserType::class, $user);
 
             // when
-            $form->submit($form_data);
+            $form->submit($formData);
 
             // then
             $this->assertTrue($form->isSynchronized());
@@ -72,11 +63,11 @@ class UserTypeTest extends TypeTestCase
     /**
      * Test password mismatch.
      */
-    public function test_password_mismatch(): void
+    public function testPasswordMismatch(): void
     {
         try {
             // given
-            $form_data = [
+            $formData = [
                 'email' => 'test@example.com',
                 'username' => 'test',
                 'password' => [
@@ -88,7 +79,7 @@ class UserTypeTest extends TypeTestCase
             $form = $this->factory->create(UserType::class, new User());
 
             // when
-            $form->submit($form_data);
+            $form->submit($formData);
 
             // then
             $this->assertFalse($form->isValid());
@@ -104,7 +95,7 @@ class UserTypeTest extends TypeTestCase
     /**
      * Test configure options.
      */
-    public function test_configure_options(): void
+    public function testConfigureOptions(): void
     {
         try {
             // given
@@ -113,10 +104,10 @@ class UserTypeTest extends TypeTestCase
 
             // when
             $type->configureOptions($resolver);
-            $resolved_options = $resolver->resolve();
+            $resolvedOptions = $resolver->resolve();
 
             // then
-            $this->assertEquals(User::class, $resolved_options['data_class']);
+            $this->assertEquals(User::class, $resolvedOptions['data_class']);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -129,7 +120,7 @@ class UserTypeTest extends TypeTestCase
     /**
      * Test get block prefix.
      */
-    public function test_get_block_prefix(): void
+    public function testGetBlockPrefix(): void
     {
         try {
             // given
@@ -147,5 +138,17 @@ class UserTypeTest extends TypeTestCase
                 'Line'  => $e->getLine(),
             ]);
         }
+    }
+
+    /**
+     * Add to pass the whole builder correctly.
+     *
+     * @return array<int, ValidatorExtension>
+     */
+    protected function getExtensions(): array
+    {
+        return [
+            new ValidatorExtension(Validation::createValidator()),
+        ];
     }
 }

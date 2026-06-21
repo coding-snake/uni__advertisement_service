@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Security controller tests.
  */
 
 namespace App\Tests\Controller;
 
+use App\Controller\SecurityController;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -16,20 +18,23 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class SecurityControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
-    private ?EntityManagerInterface $entity_manager;
+    private ?EntityManagerInterface $entityManager;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->client = static::createClient();
         $container = static::getContainer();
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
     }
 
     /**
      * Test register success.
      */
-    public function test_register_success(): void
+    public function testRegisterSuccess(): void
     {
         try {
             $crawler = $this->client->request('GET', '/security/register');
@@ -42,12 +47,12 @@ class SecurityControllerTest extends WebTestCase
             $this->client->submit($form);
 
             $router = static::getContainer()->get('router');
-            $expected_path = $router->generate('app_login');
+            $expectedPath = $router->generate('app_login');
 
-            $this->assertResponseRedirects($expected_path);
+            $this->assertResponseRedirects($expectedPath);
 
-            $user_repository = $this->entity_manager->getRepository(User::class);
-            $user = $user_repository->findOneBy(['email' => 'test@example.com']);
+            $userRepository = $this->entityManager->getRepository(User::class);
+            $user = $userRepository->findOneBy(['email' => 'test@example.com']);
             $this->assertNotNull($user);
         } catch (\Exception $e) {
             dd(['Error' => $e->getMessage(), 'File' => $e->getFile(), 'Line' => $e->getLine()]);
@@ -57,36 +62,36 @@ class SecurityControllerTest extends WebTestCase
     /**
      * Test register redirect to home.
      */
-    public function test_register_redirect_to_home(): void
+    public function testRegisterRedirectToHome(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setUsername('test_user');
         $user->setPassword('password_123');
-        $this->entity_manager->persist($user);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
 
         $this->client->request('GET', '/security/register');
 
         $router = static::getContainer()->get('router');
-        $expected_path = $router->generate('home');
+        $expectedPath = $router->generate('home');
 
-        $this->assertResponseRedirects($expected_path);
+        $this->assertResponseRedirects($expectedPath);
     }
 
     /**
      * Test register fail duplicate email.
      */
-    public function test_register_fail_duplicate_email(): void
+    public function testRegisterFailDuplicateEmail(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_123');
         $user->setUsername('test_user');
-        $this->entity_manager->persist($user);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         $crawler = $this->client->request('GET', '/security/register');
 
@@ -105,24 +110,24 @@ class SecurityControllerTest extends WebTestCase
     /**
      * Test login redirect.
      */
-    public function test_login_redirect(): void
+    public function testLoginRedirect(): void
     {
         try {
             $user = new User();
             $user->setEmail('test@example.com');
             $user->setPassword('password_123');
             $user->setUsername('test_user');
-            $this->entity_manager->persist($user);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             $this->client->loginUser($user);
 
             $this->client->request('GET', '/security/login');
 
             $router = static::getContainer()->get('router');
-            $expected_path = $router->generate('home');
+            $expectedPath = $router->generate('home');
 
-            $this->assertResponseRedirects($expected_path);
+            $this->assertResponseRedirects($expectedPath);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -135,7 +140,7 @@ class SecurityControllerTest extends WebTestCase
     /**
      * Test login success.
      */
-    public function test_login_success(): void
+    public function testLoginSuccess(): void
     {
         try {
             $user = new User();
@@ -146,8 +151,8 @@ class SecurityControllerTest extends WebTestCase
             $hasher = $container->get('security.password_hasher');
             $user->setPassword($hasher->hashPassword($user, 'password_123'));
 
-            $this->entity_manager->persist($user);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             $crawler = $this->client->request('GET', '/security/login');
             $form = $crawler->selectButton('form-submit-button')->form([
@@ -157,8 +162,8 @@ class SecurityControllerTest extends WebTestCase
             $this->client->submit($form);
 
             $router = static::getContainer()->get('router');
-            $expected_path = $router->generate('home');
-            $this->assertResponseRedirects($expected_path);
+            $expectedPath = $router->generate('home');
+            $this->assertResponseRedirects($expectedPath);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -171,9 +176,9 @@ class SecurityControllerTest extends WebTestCase
     /**
      * The logout exception test.
      */
-    public function test_logout_exception(): void
+    public function testLogoutException(): void
     {
-        $controller = new \App\Controller\SecurityController();
+        $controller = new SecurityController();
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('This method can be blank');

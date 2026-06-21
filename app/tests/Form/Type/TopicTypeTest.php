@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Topic type tests.
  */
@@ -18,11 +19,11 @@ class TopicTypeTest extends TypeTestCase
     /**
      * Test build form.
      */
-    public function test_build_form(): void
+    public function testBuildForm(): void
     {
         try {
             // given
-            $form_data = [
+            $formData = [
                 'name' => 'topic_name',
             ];
 
@@ -30,7 +31,7 @@ class TopicTypeTest extends TypeTestCase
             $form = $this->factory->create(TopicType::class, $topic);
 
             // when
-            $form->submit($form_data);
+            $form->submit($formData);
 
             // then
             $this->assertTrue($form->isSynchronized());
@@ -47,7 +48,7 @@ class TopicTypeTest extends TypeTestCase
     /**
      * Test configure options.
      */
-    public function test_configure_options(): void
+    public function testConfigureOptions(): void
     {
         try {
             // given
@@ -58,8 +59,8 @@ class TopicTypeTest extends TypeTestCase
             $type->configureOptions($resolver);
 
             // then
-            $resolved_options = $resolver->resolve();
-            $this->assertEquals(Topic::class, $resolved_options['data_class']);
+            $resolvedOptions = $resolver->resolve();
+            $this->assertEquals(Topic::class, $resolvedOptions['data_class']);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),

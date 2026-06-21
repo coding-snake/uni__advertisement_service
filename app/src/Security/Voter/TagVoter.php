@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Tag Voter
+ * Tag Voter.
  */
+
 namespace App\Security\Voter;
 
 use App\Entity\Tag;

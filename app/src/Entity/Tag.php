@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Tag Entity
+ * Tag Entity.
  */
+
 namespace App\Entity;
 
 use App\Repository\TagRepository;

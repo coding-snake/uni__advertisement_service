@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Home Controller
+ * Home Controller.
  */
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

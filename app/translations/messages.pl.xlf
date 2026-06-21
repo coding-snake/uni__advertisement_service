@@ -10,8 +10,14 @@
         <source>label.repeat_password</source>
         <target>Powtórz hasło</target>
       </trans-unit>
-
-
+      <trans-unit id="label.password">
+        <source>label.password</source>
+        <target>Hasło</target>
+      </trans-unit>
+      <trans-unit id="title.login_now">
+        <source>title.login_now</source>
+        <target>Zaloguj się</target>
+      </trans-unit>
       <trans-unit id="message.enter_password">
         <source>message.enter_password</source>
         <target>Wprowadź hasło</target>

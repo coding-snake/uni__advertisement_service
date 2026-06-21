@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tag service tests.
  */
@@ -18,43 +19,43 @@ use PHPUnit\Framework\TestCase;
  */
 class TagServiceTest extends TestCase
 {
-    private TagRepository|MockObject $tag_repository;
+    private TagRepository|MockObject $tagRepository;
     private PaginatorInterface|MockObject $paginator;
-    private TagService $tag_service;
+    private TagService $tagService;
 
     /**
      * Set up tests.
      */
     protected function setUp(): void
     {
-        $this->tag_repository = $this->createMock(TagRepository::class);
+        $this->tagRepository = $this->createMock(TagRepository::class);
         $this->paginator = $this->createMock(PaginatorInterface::class);
 
-        $this->tag_service = new TagService($this->tag_repository, $this->paginator);
+        $this->tagService = new TagService($this->tagRepository, $this->paginator);
     }
 
     /**
      * Test get paginated list.
      */
-    public function test_get_paginated_list(): void
+    public function testGetPaginatedList(): void
     {
         try {
             // given
             $page = 1;
-            $expected_result = $this->createMock(PaginationInterface::class);
+            $expectedResult = $this->createMock(PaginationInterface::class);
 
-            $this->tag_repository->expects($this->once())
+            $this->tagRepository->expects($this->once())
                 ->method('queryAll');
 
             $this->paginator->expects($this->once())
                 ->method('paginate')
-                ->willReturn($expected_result);
+                ->willReturn($expectedResult);
 
             // when
-            $result = $this->tag_service->getPaginatedList($page);
+            $result = $this->tagService->getPaginatedList($page);
 
             // then
-            $this->assertSame($expected_result, $result);
+            $this->assertSame($expectedResult, $result);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -67,18 +68,18 @@ class TagServiceTest extends TestCase
     /**
      * Test save new tag.
      */
-    public function test_save_new_tag_sets_dates(): void
+    public function testSaveNewTagSetsDates(): void
     {
         try {
             // given
             $tag = new Tag();
 
-            $this->tag_repository->expects($this->once())
+            $this->tagRepository->expects($this->once())
                 ->method('save')
                 ->with($tag);
 
             // when
-            $this->tag_service->save($tag);
+            $this->tagService->save($tag);
 
             // then
             $this->assertNotNull($tag->getCreatedAt());
@@ -95,18 +96,18 @@ class TagServiceTest extends TestCase
     /**
      * Test delete.
      */
-    public function test_delete(): void
+    public function testDelete(): void
     {
         try {
             // given
             $tag = new Tag();
 
-            $this->tag_repository->expects($this->once())
+            $this->tagRepository->expects($this->once())
                 ->method('delete')
                 ->with($tag);
 
             // when
-            $this->tag_service->delete($tag);
+            $this->tagService->delete($tag);
 
             // then
         } catch (\Exception $e) {

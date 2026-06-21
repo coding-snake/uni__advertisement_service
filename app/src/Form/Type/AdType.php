@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Ad Type
+ * Ad Type.
  */
+
 namespace App\Form\Type;
 
 use App\Entity\Ad;
@@ -16,7 +18,7 @@ use Symfony\Component\Form\FormTypeExtensionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * AdType
+ * AdType.
  */
 class AdType extends AbstractType
 {

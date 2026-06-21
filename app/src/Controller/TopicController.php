@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Topic Controller
+ * Topic Controller.
  */
+
 namespace App\Controller;
 
 use App\Entity\Topic;

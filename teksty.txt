@@ -1,7 +1,0 @@
-
-
-
-testy:
-
-bin/console doctrine:migrations:migrate --env=test
-./bin/phpunit --coverage-text

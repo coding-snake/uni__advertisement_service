@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Home controller tests.
  */
@@ -15,7 +16,7 @@ class HomeControllerTest extends WebTestCase
     /**
      * Test '/' route.
      */
-    public function test_home_page_renders_template(): void
+    public function testHomePageRendersTemplate(): void
     {
         try {
             // given
@@ -27,10 +28,10 @@ class HomeControllerTest extends WebTestCase
             // then
             $this->assertResponseIsSuccessful();
 
-            $response_content = $client->getResponse()->getContent();
+            $responseContent = $client->getResponse()->getContent();
 
-            $this->assertStringContainsString('<html', $response_content);
-            $this->assertStringContainsString('</html>', $response_content);
+            $this->assertStringContainsString('<html', $responseContent);
+            $this->assertStringContainsString('</html>', $responseContent);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),

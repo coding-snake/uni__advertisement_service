@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User repository tests.
  */
@@ -17,8 +18,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  */
 class UserRepositoryTest extends KernelTestCase
 {
-    private ?EntityManagerInterface $entity_manager;
-    private ?UserRepository $user_repository;
+    private ?EntityManagerInterface $entityManager;
+    private ?UserRepository $userRepository;
 
     /**
      * Set up tests.
@@ -28,14 +29,14 @@ class UserRepositoryTest extends KernelTestCase
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
-        $this->user_repository = $container->get(UserRepository::class);
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
+        $this->userRepository = $container->get(UserRepository::class);
     }
 
     /**
      * Test upgrade password success.
      */
-    public function test_upgrade_password_success(): void
+    public function testUpgradePasswordSuccess(): void
     {
         try {
             // given
@@ -44,19 +45,19 @@ class UserRepositoryTest extends KernelTestCase
             $user->setPassword('password_1');
             $user->setUsername('test');
 
-            $this->entity_manager->persist($user);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             // when
-            $this->user_repository->upgradePassword($user, 'password_2');
+            $this->userRepository->upgradePassword($user, 'password_2');
 
             // then
-            $this->entity_manager->clear();
-            
-            $updated_user = $this->user_repository->find($user->getId());
+            $this->entityManager->clear();
 
-            $this->assertNotNull($updated_user);
-            $this->assertSame('password_2', $updated_user->getPassword());
+            $updatedUser = $this->userRepository->find($user->getId());
+
+            $this->assertNotNull($updatedUser);
+            $this->assertSame('password_2', $updatedUser->getPassword());
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -69,18 +70,20 @@ class UserRepositoryTest extends KernelTestCase
     /**
      * Test upgrade password throws exception.
      */
-    public function test_upgrade_password_throws_exception(): void
+    public function testUpgradePasswordThrowsException(): void
     {
-            // given
-            $invalid_user = new class implements PasswordAuthenticatedUserInterface {
-                public function getPassword(): ?string
-                {
-                    return 'password_1';
-                }
-            };
+        // Define the class locally inside the method
+        $invalidUser = new class() implements PasswordAuthenticatedUserInterface {
+            /**
+             * The user password.
+             */
+            public function getPassword(): ?string
+            {
+                return 'password_1';
+            }
+        };
 
-            // when
-            $this->expectException(UnsupportedUserException::class);
-            $this->user_repository->upgradePassword($invalid_user, 'password_2');
+        $this->expectException(UnsupportedUserException::class);
+        $this->userRepository->upgradePassword($invalidUser, 'password_2');
     }
 }

@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Admin Controller
+ * Admin Controller.
  */
+
 namespace App\Controller;
 
 use App\Entity\User;

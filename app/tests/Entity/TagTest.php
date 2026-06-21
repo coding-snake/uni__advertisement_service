@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tag entity tests.
  */
@@ -18,7 +19,7 @@ class TagTest extends TestCase
     /**
      * Test get and set.
      */
-    public function test_get_and_set(): void
+    public function testGetAndSet(): void
     {
         try {
             // given
@@ -51,7 +52,7 @@ class TagTest extends TestCase
     /**
      * Test ad collection management.
      */
-    public function test_ad_collection_management(): void
+    public function testAdCollectionManagement(): void
     {
         try {
             // given

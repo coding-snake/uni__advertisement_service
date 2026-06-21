@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User entity tests.
  */
@@ -17,7 +18,7 @@ class UserTest extends TestCase
     /**
      * Test get and set.
      */
-    public function test_get_and_set(): void
+    public function testGetAndSet(): void
     {
         try {
             // given
@@ -46,7 +47,7 @@ class UserTest extends TestCase
     /**
      * Test roles.
      */
-    public function test_roles(): void
+    public function testRoles(): void
     {
         try {
             // given
@@ -75,7 +76,7 @@ class UserTest extends TestCase
     /**
      * Test erase credentials.
      */
-    public function test_erase_credentials(): void
+    public function testEraseCredentials(): void
     {
         try {
             // given

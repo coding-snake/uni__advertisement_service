@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Change Password Type
+ * Change Password Type.
  */
+
 namespace App\Form\Type;
 
 use Symfony\Component\Form\AbstractType;

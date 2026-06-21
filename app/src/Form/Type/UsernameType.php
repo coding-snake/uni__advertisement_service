@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Username Type
+ * Username Type.
  */
+
 namespace App\Form\Type;
 
 use App\Entity\User;

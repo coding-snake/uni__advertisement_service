@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Topic entity tests.
  */
@@ -17,7 +18,7 @@ class TopicTest extends TestCase
     /**
      * Test get and set.
      */
-    public function test_get_and_set(): void
+    public function testGetAndSet(): void
     {
         try {
             // given

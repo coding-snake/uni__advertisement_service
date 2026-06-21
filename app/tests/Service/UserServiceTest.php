@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User service tests.
  */
@@ -18,38 +19,38 @@ use PHPUnit\Framework\TestCase;
  */
 class UserServiceTest extends TestCase
 {
-    private UserRepository|MockObject $user_repository;
+    private UserRepository|MockObject $userRepository;
     private PaginatorInterface|MockObject $paginator;
-    private UserService $user_service;
+    private UserService $userService;
 
     /**
      * Set up tests.
      */
     protected function setUp(): void
     {
-        $this->user_repository = $this->createMock(UserRepository::class);
+        $this->userRepository = $this->createMock(UserRepository::class);
         $this->paginator = $this->createMock(PaginatorInterface::class);
 
-        $this->user_service = new UserService($this->user_repository, $this->paginator);
+        $this->userService = new UserService($this->userRepository, $this->paginator);
     }
 
     /**
      * Test get paginated list.
      */
-    public function test_get_paginated_list(): void
+    public function testGetPaginatedList(): void
     {
         try {
             // given
             $page = 1;
-            $expected_result = $this->createMock(PaginationInterface::class);
-            $query_builder = $this->createMock(QueryBuilder::class);
+            $expectedResult = $this->createMock(PaginationInterface::class);
+            $queryBuilder = $this->createMock(QueryBuilder::class);
 
-            $this->user_repository->expects($this->once())
+            $this->userRepository->expects($this->once())
                 ->method('createQueryBuilder')
                 ->with('u')
-                ->willReturn($query_builder);
+                ->willReturn($queryBuilder);
 
-            $query_builder->expects($this->once())
+            $queryBuilder->expects($this->once())
                 ->method('orderBy')
                 ->with('u.id', 'DESC')
                 ->willReturnSelf();
@@ -57,20 +58,18 @@ class UserServiceTest extends TestCase
             $this->paginator->expects($this->once())
                 ->method('paginate')
                 ->with(
-                    $query_builder,
+                    $queryBuilder,
                     $page,
                     10,
-                    $this->callback(function ($argument) {
-                        return is_array($argument);
-                    })
+                    $this->callback(fn ($argument) => is_array($argument))
                 )
-                ->willReturn($expected_result);
+                ->willReturn($expectedResult);
 
             // when
-            $result = $this->user_service->getPaginatedList($page);
+            $result = $this->userService->getPaginatedList($page);
 
             // then
-            $this->assertSame($expected_result, $result);
+            $this->assertSame($expectedResult, $result);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),

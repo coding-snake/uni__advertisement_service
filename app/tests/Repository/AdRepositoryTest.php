@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ad repository tests.
  */
@@ -16,8 +17,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 class AdRepositoryTest extends KernelTestCase
 {
-    private ?EntityManagerInterface $entity_manager;
-    private ?AdRepository $ad_repository;
+    private ?EntityManagerInterface $entityManager;
+    private ?AdRepository $adRepository;
 
     /**
      * Set up tests.
@@ -28,21 +29,21 @@ class AdRepositoryTest extends KernelTestCase
 
         $container = static::getContainer();
 
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
-        $this->ad_repository = $this->entity_manager->getRepository(Ad::class);
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
+        $this->adRepository = $this->entityManager->getRepository(Ad::class);
     }
 
     /**
      * Test save.
      */
-    public function test_save(): void
+    public function testSave(): void
     {
         try {
             // given
             $topic = new Topic();
             $topic->setName('topic_name');
 
-            $this->entity_manager->persist($topic);
+            $this->entityManager->persist($topic);
 
             $ad = new Ad();
             $ad->setName('ad_name');
@@ -50,10 +51,10 @@ class AdRepositoryTest extends KernelTestCase
             $ad->setTopic($topic);
 
             // when
-            $this->ad_repository->save($ad);
+            $this->adRepository->save($ad);
 
             // then
-            $result = $this->ad_repository->find($ad->getId());
+            $result = $this->adRepository->find($ad->getId());
 
             $this->assertNotNull($result);
             $this->assertEquals('ad_name', $result->getName());
@@ -69,7 +70,7 @@ class AdRepositoryTest extends KernelTestCase
     /**
      * Test delete.
      */
-    public function test_delete(): void
+    public function testDelete(): void
     {
         try {
             // given
@@ -81,18 +82,18 @@ class AdRepositoryTest extends KernelTestCase
             $ad->setContent('ad_content');
             $ad->setTopic($topic);
 
-            $this->entity_manager->persist($topic);
-            $this->entity_manager->persist($ad);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($topic);
+            $this->entityManager->persist($ad);
+            $this->entityManager->flush();
 
             $id = $ad->getId();
 
             // when
-            $this->ad_repository->delete($ad);
+            $this->adRepository->delete($ad);
 
             // then
             $this->assertNull(
-                $this->ad_repository->find($id)
+                $this->adRepository->find($id)
             );
         } catch (\Exception $e) {
             dd([
@@ -106,28 +107,28 @@ class AdRepositoryTest extends KernelTestCase
     /**
      * Test count by topic.
      */
-    public function test_count_by_topic(): void
+    public function testCountByTopic(): void
     {
         try {
             // given
             $topic = new Topic();
             $topic->setName('topic_name');
 
-            $this->entity_manager->persist($topic);
+            $this->entityManager->persist($topic);
 
             for ($i = 0; $i < 3; ++$i) {
                 $ad = new Ad();
-                $ad->setName('ad_name_' . $i);
-                $ad->setContent('ad_content_' . $i);
+                $ad->setName('ad_name_'.$i);
+                $ad->setContent('ad_content_'.$i);
                 $ad->setTopic($topic);
 
-                $this->entity_manager->persist($ad);
+                $this->entityManager->persist($ad);
             }
 
-            $this->entity_manager->flush();
+            $this->entityManager->flush();
 
             // when
-            $result = $this->ad_repository->countByTopic($topic);
+            $result = $this->adRepository->countByTopic($topic);
 
             // then
             $this->assertEquals(3, $result);
@@ -143,7 +144,7 @@ class AdRepositoryTest extends KernelTestCase
     /**
      * Test query all.
      */
-    public function test_query_all(): void
+    public function testQueryAll(): void
     {
         try {
             // given
@@ -155,12 +156,12 @@ class AdRepositoryTest extends KernelTestCase
             $ad->setContent('ad_content');
             $ad->setTopic($topic);
 
-            $this->entity_manager->persist($topic);
-            $this->entity_manager->persist($ad);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($topic);
+            $this->entityManager->persist($ad);
+            $this->entityManager->flush();
 
             // when
-            $result = $this->ad_repository
+            $result = $this->adRepository
                 ->queryAll()
                 ->getQuery()
                 ->getResult();

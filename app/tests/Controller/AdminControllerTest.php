@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin controller tests.
  */
@@ -16,20 +17,23 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class AdminControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
-    private ?EntityManagerInterface $entity_manager;
+    private ?EntityManagerInterface $entityManager;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->client = static::createClient();
         $container = static::getContainer();
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
     }
 
     /**
      * Test admin index.
      */
-    public function test_admin_index(): void
+    public function testAdminIndex(): void
     {
         try {
             $admin = new User();
@@ -37,17 +41,17 @@ class AdminControllerTest extends WebTestCase
             $admin->setPassword('password_1');
             $admin->setUsername('admin_user');
             $admin->setRoles(['ROLE_ADMIN']);
-            $this->entity_manager->persist($admin);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($admin);
+            $this->entityManager->flush();
 
             $this->client->loginUser($admin);
             $this->client->request('GET', '/admin/', ['page' => 1]);
 
             $this->assertResponseIsSuccessful();
-            $response_content = $this->client->getResponse()->getContent();
+            $responseContent = $this->client->getResponse()->getContent();
 
-            $this->assertStringContainsString('<html', $response_content);
-            $this->assertStringContainsString('</html>', $response_content);
+            $this->assertStringContainsString('<html', $responseContent);
+            $this->assertStringContainsString('</html>', $responseContent);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -60,7 +64,7 @@ class AdminControllerTest extends WebTestCase
     /**
      * Test admin user index.
      */
-    public function test_admin_user_index(): void
+    public function testAdminUserIndex(): void
     {
         try {
             $admin = new User();
@@ -69,8 +73,8 @@ class AdminControllerTest extends WebTestCase
             $admin->setUsername('admin_user');
             $admin->setRoles(['ROLE_ADMIN']);
 
-            $this->entity_manager->persist($admin);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($admin);
+            $this->entityManager->flush();
 
             $this->client->loginUser($admin);
 
@@ -95,7 +99,7 @@ class AdminControllerTest extends WebTestCase
     /**
      * Test edit user username.
      */
-    public function test_admin_edit_username(): void
+    public function testAdminEditUsername(): void
     {
         try {
             $admin = new User();
@@ -109,14 +113,14 @@ class AdminControllerTest extends WebTestCase
             $user->setPassword('password_1');
             $user->setUsername('target_user');
 
-            $this->entity_manager->persist($admin);
-            $this->entity_manager->persist($user);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($admin);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             $this->client->loginUser($admin);
 
             // when
-            $this->client->request('GET', '/admin/users/' . $user->getId() . '/edit-username');
+            $this->client->request('GET', '/admin/users/'.$user->getId().'/edit-username');
             $this->client->submitForm('form-submit-button', [
                 'username[username]' => 'updated_name',
             ]);
@@ -124,9 +128,9 @@ class AdminControllerTest extends WebTestCase
             // then
             $this->assertResponseRedirects('/admin/users');
 
-            $this->entity_manager->clear();
-            $updated_user = $this->entity_manager->getRepository(User::class)->find($user->getId());
-            $this->assertEquals('updated_name', $updated_user->getUsername());
+            $this->entityManager->clear();
+            $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
+            $this->assertEquals('updated_name', $updatedUser->getUsername());
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -139,7 +143,7 @@ class AdminControllerTest extends WebTestCase
     /**
      * Test edit user password.
      */
-    public function test_admin_edit_password(): void
+    public function testAdminEditPassword(): void
     {
         try {
             $admin = new User();
@@ -153,14 +157,14 @@ class AdminControllerTest extends WebTestCase
             $user->setPassword('old_password');
             $user->setUsername('target_user');
 
-            $this->entity_manager->persist($admin);
-            $this->entity_manager->persist($user);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($admin);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             $this->client->loginUser($admin);
 
             // when
-            $this->client->request('GET', '/admin/users/' . $user->getId() . '/edit-password');
+            $this->client->request('GET', '/admin/users/'.$user->getId().'/edit-password');
             $this->client->submitForm('form-submit-button', [
                 'change_password[plainPassword][first]' => 'new_password',
                 'change_password[plainPassword][second]' => 'new_password',

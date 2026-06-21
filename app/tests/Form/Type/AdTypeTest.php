@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ad type functional tests.
  */
@@ -18,8 +19,8 @@ use Symfony\Component\Form\FormFactoryInterface;
  */
 class AdTypeTest extends KernelTestCase
 {
-    private ?EntityManagerInterface $entity_manager;
-    private ?FormFactoryInterface $form_factory;
+    private ?EntityManagerInterface $entityManager;
+    private ?FormFactoryInterface $formFactory;
 
     /**
      * Set up test.
@@ -28,15 +29,15 @@ class AdTypeTest extends KernelTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
-        
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
-        $this->form_factory = $container->get('form.factory');
+
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
+        $this->formFactory = $container->get('form.factory');
     }
 
     /**
      * Test submit valid data.
      */
-    public function test_submit_valid_data(): void
+    public function testSubmitValidData(): void
     {
         try {
             // given
@@ -46,12 +47,12 @@ class AdTypeTest extends KernelTestCase
             $tag = new Tag();
             $tag->setName('tag_name');
 
-            $this->entity_manager->persist($topic);
-            $this->entity_manager->persist($tag);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($topic);
+            $this->entityManager->persist($tag);
+            $this->entityManager->flush();
 
             $ad = new Ad();
-            $form = $this->form_factory->create(AdType::class, $ad);
+            $form = $this->formFactory->create(AdType::class, $ad);
 
             // when
             $form->submit([

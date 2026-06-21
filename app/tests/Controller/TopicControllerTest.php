@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Topic controller tests.
  */
@@ -20,9 +21,12 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class TopicControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
-    private ?EntityManagerInterface $entity_manager;
-    private ?TopicServiceInterface $topic_service;
+    private ?EntityManagerInterface $entityManager;
+    private ?TopicServiceInterface $topicService;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,14 +34,14 @@ class TopicControllerTest extends WebTestCase
         $this->client = static::createClient();
 
         $container = static::getContainer();
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
-        $this->topic_service = $container->get(TopicService::class);
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
+        $this->topicService = $container->get(TopicService::class);
     }
 
     /**
      * Test '/topics' route.
      */
-    public function test_topic_page_render_default(): void
+    public function testTopicPageRenderDefault(): void
     {
         // when
         $this->client->request('GET', '/topics');
@@ -45,16 +49,16 @@ class TopicControllerTest extends WebTestCase
         // then
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
+        $responseContent = $this->client->getResponse()->getContent();
 
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test '/topics/{id}' route.
      */
-    public function test_topic_page_render_read(): void
+    public function testTopicPageRenderRead(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
@@ -69,34 +73,34 @@ class TopicControllerTest extends WebTestCase
         $topic->setSlug('topic_slug');
         $topic->setAuthor($user);
 
-        $this->entity_manager->persist($user);
-        $this->entity_manager->persist($topic);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($topic);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
-        $this->client->request('GET', '/topics/' . $topic->getId());
+        $this->client->request('GET', '/topics/'.$topic->getId());
 
         // then
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test '/topics/create' route.
      */
-    public function test_topic_page_render_create(): void
+    public function testTopicPageRenderCreate(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_1');
         $user->setUsername('test');
 
-        $this->entity_manager->persist($user);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
@@ -105,15 +109,15 @@ class TopicControllerTest extends WebTestCase
         // then
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test create.
      */
-    public function test_topic_create(): void
+    public function testTopicCreate(): void
     {
         // given
         $user = new User();
@@ -121,8 +125,8 @@ class TopicControllerTest extends WebTestCase
         $user->setPassword('password_1');
         $user->setUsername('test');
 
-        $this->entity_manager->persist($user);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
@@ -139,20 +143,20 @@ class TopicControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 
-        $this->entity_manager->clear();
+        $this->entityManager->clear();
 
-        $topic_repository = $this->entity_manager->getRepository(Topic::class);
-        $saved_topic = $topic_repository->findOneBy(['name' => 'topic_name']);
+        $topicRepository = $this->entityManager->getRepository(Topic::class);
+        $savedTopic = $topicRepository->findOneBy(['name' => 'topic_name']);
 
-        $this->assertNotNull($saved_topic);
-        $this->assertEquals('topic_name', $saved_topic->getName());
-        $this->assertEquals('test', $saved_topic->getAuthor()->getUsername());
+        $this->assertNotNull($savedTopic);
+        $this->assertEquals('topic_name', $savedTopic->getName());
+        $this->assertEquals('test', $savedTopic->getAuthor()->getUsername());
     }
 
     /**
      * Test edit.
      */
-    public function test_topic_edit(): void
+    public function testTopicEdit(): void
     {
         // given
         $user = new User();
@@ -168,15 +172,15 @@ class TopicControllerTest extends WebTestCase
         $topic->setSlug('topic_1');
         $topic->setAuthor($user);
 
-        $this->entity_manager->persist($user);
-        $this->entity_manager->persist($topic);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($topic);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
 
         // when
-        $this->client->request('GET', '/topics/' . $topic->getId() . '/edit');
+        $this->client->request('GET', '/topics/'.$topic->getId().'/edit');
         $this->client->submitForm('form-submit-button', [
             'topic[name]' => 'topic_2',
         ]);
@@ -187,19 +191,19 @@ class TopicControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 
-        $this->entity_manager->clear();
+        $this->entityManager->clear();
 
-        $topic_repository = $this->entity_manager->getRepository(Topic::class);
-        $updated_topic = $topic_repository->find($topic->getId());
+        $topicRepository = $this->entityManager->getRepository(Topic::class);
+        $updatedTopic = $topicRepository->find($topic->getId());
 
-        $this->assertNotNull($updated_topic);
-        $this->assertEquals('topic_2', $updated_topic->getName());
+        $this->assertNotNull($updatedTopic);
+        $this->assertEquals('topic_2', $updatedTopic->getName());
     }
 
     /**
      * Test delete.
      */
-    public function test_topic_delete_success(): void
+    public function testTopicDeleteSuccess(): void
     {
         // given
         $user = new User();
@@ -215,15 +219,15 @@ class TopicControllerTest extends WebTestCase
         $topic->setSlug('topic_slug');
         $topic->setAuthor($user);
 
-        $this->entity_manager->persist($user);
-        $this->entity_manager->persist($topic);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($topic);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
 
         // when
-        $this->client->request('GET', '/topics/' . $topic->getId() . '/delete');
+        $this->client->request('GET', '/topics/'.$topic->getId().'/delete');
         $this->client->submitForm('form-submit-button');
 
         // then
@@ -232,18 +236,18 @@ class TopicControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 
-        $this->entity_manager->clear();
+        $this->entityManager->clear();
 
-        $topic_repository = $this->entity_manager->getRepository(Topic::class);
-        $deleted_topic = $topic_repository->find($topic->getId());
+        $topicRepository = $this->entityManager->getRepository(Topic::class);
+        $deletedTopic = $topicRepository->find($topic->getId());
 
-        $this->assertNull($deleted_topic);
+        $this->assertNull($deletedTopic);
     }
 
     /**
      * Test delete fails when topic has ads.
      */
-    public function test_topic_delete_fail_has_ads(): void
+    public function testTopicDeleteFailHasAds(): void
     {
         try {
             // given
@@ -266,16 +270,16 @@ class TopicControllerTest extends WebTestCase
             $ad->setAuthor($user);
             $ad->setContent('ad_content');
 
-            $this->entity_manager->persist($user);
-            $this->entity_manager->persist($topic);
-            $this->entity_manager->persist($ad);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->persist($topic);
+            $this->entityManager->persist($ad);
+            $this->entityManager->flush();
 
             $this->client->loginUser($user);
             $this->client->catchExceptions(false);
 
             // when
-            $this->client->request('GET', '/topics/' . $topic->getId() . '/delete');
+            $this->client->request('GET', '/topics/'.$topic->getId().'/delete');
 
             // then
             $this->assertResponseRedirects('/topics');
@@ -285,12 +289,12 @@ class TopicControllerTest extends WebTestCase
 
             $this->assertSelectorExists('.alert-warning');
 
-            $this->entity_manager->clear();
-            $topic_repository = $this->entity_manager->getRepository(Topic::class);
-            $saved_topic = $topic_repository->find($topic->getId());
+            $this->entityManager->clear();
+            $topicRepository = $this->entityManager->getRepository(Topic::class);
+            $savedTopic = $topicRepository->find($topic->getId());
 
-            $this->assertNotNull($saved_topic);
-            $this->assertEquals('topic_name', $saved_topic->getName());
+            $this->assertNotNull($savedTopic);
+            $this->assertEquals('topic_name', $savedTopic->getName());
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),

@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Ad service tests.
  */
 
 namespace App\Tests\Service;
 
+use Doctrine\ORM\QueryBuilder;
 use App\Entity\Ad;
 use App\Entity\Tag;
 use App\Entity\Topic;
@@ -20,43 +22,43 @@ use PHPUnit\Framework\TestCase;
  */
 class AdServiceTest extends TestCase
 {
-    private AdRepository|MockObject $ad_repository;
+    private AdRepository|MockObject $adRepository;
     private PaginatorInterface|MockObject $paginator;
-    private AdService $ad_service;
+    private AdService $adService;
 
     /**
      * Set up tests.
      */
     protected function setUp(): void
     {
-        $this->ad_repository = $this->createMock(AdRepository::class);
+        $this->adRepository = $this->createMock(AdRepository::class);
         $this->paginator = $this->createMock(PaginatorInterface::class);
 
-        $this->ad_service = new AdService($this->ad_repository, $this->paginator);
+        $this->adService = new AdService($this->adRepository, $this->paginator);
     }
 
     /**
      * Test get paginated list.
      */
-    public function test_get_paginated_list(): void
+    public function testGetPaginatedList(): void
     {
         try {
             // given
             $page = 1;
-            $expected_result = $this->createMock(PaginationInterface::class);
+            $expectedResult = $this->createMock(PaginationInterface::class);
 
-            $this->ad_repository->expects($this->once())
+            $this->adRepository->expects($this->once())
                 ->method('queryAll');
 
             $this->paginator->expects($this->once())
                 ->method('paginate')
-                ->willReturn($expected_result);
+                ->willReturn($expectedResult);
 
             // when
-            $result = $this->ad_service->getPaginatedList($page);
+            $result = $this->adService->getPaginatedList($page);
 
             // then
-            $this->assertSame($expected_result, $result);
+            $this->assertSame($expectedResult, $result);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -69,18 +71,18 @@ class AdServiceTest extends TestCase
     /**
      * Test save new ad.
      */
-    public function test_save_new_ad_sets_dates(): void
+    public function testSaveNewAdSetsDates(): void
     {
         try {
             // given
             $ad = new Ad();
 
-            $this->ad_repository->expects($this->once())
+            $this->adRepository->expects($this->once())
                 ->method('save')
                 ->with($ad);
 
             // when
-            $this->ad_service->save($ad);
+            $this->adService->save($ad);
 
             // then
             $this->assertNotNull($ad->getCreatedAt());
@@ -97,18 +99,18 @@ class AdServiceTest extends TestCase
     /**
      * Test delete.
      */
-    public function test_delete(): void
+    public function testDelete(): void
     {
         try {
             // given
             $ad = new Ad();
 
-            $this->ad_repository->expects($this->once())
+            $this->adRepository->expects($this->once())
                 ->method('delete')
                 ->with($ad);
 
             // when
-            $this->ad_service->delete($ad);
+            $this->adService->delete($ad);
 
             // then
         } catch (\Exception $e) {
@@ -123,33 +125,33 @@ class AdServiceTest extends TestCase
     /**
      * Test get paginated list by topic.
      */
-    public function test_get_paginated_list_by_topic(): void
+    public function testGetPaginatedListByTopic(): void
     {
         try {
             // given
             $topic = new Topic();
             $page = 1;
-            $expected_result = $this->createMock(PaginationInterface::class);
-            $query_builder = $this->createMock(\Doctrine\ORM\QueryBuilder::class);
+            $expectedResult = $this->createMock(PaginationInterface::class);
+            $queryBuilder = $this->createMock(QueryBuilder::class);
 
-            $this->ad_repository->expects($this->once())
+            $this->adRepository->expects($this->once())
                 ->method('createQueryBuilder')
-                ->willReturn($query_builder);
+                ->willReturn($queryBuilder);
 
-            $query_builder->method('where')->willReturnSelf();
-            $query_builder->method('setParameter')->willReturnSelf();
-            $query_builder->method('orderBy')->willReturnSelf();
+            $queryBuilder->method('where')->willReturnSelf();
+            $queryBuilder->method('setParameter')->willReturnSelf();
+            $queryBuilder->method('orderBy')->willReturnSelf();
 
             $this->paginator->expects($this->once())
                 ->method('paginate')
-                ->with($query_builder, $page, 10)
-                ->willReturn($expected_result);
+                ->with($queryBuilder, $page, 10)
+                ->willReturn($expectedResult);
 
             // when
-            $result = $this->ad_service->getPaginatedListByTopic($topic, $page);
+            $result = $this->adService->getPaginatedListByTopic($topic, $page);
 
             // then
-            $this->assertSame($expected_result, $result);
+            $this->assertSame($expectedResult, $result);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -162,34 +164,34 @@ class AdServiceTest extends TestCase
     /**
      * Test get paginated list by tag.
      */
-    public function test_get_paginated_list_by_tag(): void
+    public function testGetPaginatedListByTag(): void
     {
         try {
             // given
             $tag = new Tag();
             $page = 1;
-            $expected_result = $this->createMock(PaginationInterface::class);
-            $query_builder = $this->createMock(\Doctrine\ORM\QueryBuilder::class);
+            $expectedResult = $this->createMock(PaginationInterface::class);
+            $queryBuilder = $this->createMock(QueryBuilder::class);
 
-            $this->ad_repository->expects($this->once())
+            $this->adRepository->expects($this->once())
                 ->method('createQueryBuilder')
-                ->willReturn($query_builder);
+                ->willReturn($queryBuilder);
 
-            $query_builder->method('innerJoin')->willReturnSelf();
-            $query_builder->method('where')->willReturnSelf();
-            $query_builder->method('setParameter')->willReturnSelf();
-            $query_builder->method('orderBy')->willReturnSelf();
+            $queryBuilder->method('innerJoin')->willReturnSelf();
+            $queryBuilder->method('where')->willReturnSelf();
+            $queryBuilder->method('setParameter')->willReturnSelf();
+            $queryBuilder->method('orderBy')->willReturnSelf();
 
             $this->paginator->expects($this->once())
                 ->method('paginate')
-                ->with($query_builder, $page, 10)
-                ->willReturn($expected_result);
+                ->with($queryBuilder, $page, 10)
+                ->willReturn($expectedResult);
 
             // when
-            $result = $this->ad_service->getPaginatedListByTag($tag, $page);
+            $result = $this->adService->getPaginatedListByTag($tag, $page);
 
             // then
-            $this->assertSame($expected_result, $result);
+            $this->assertSame($expectedResult, $result);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tag controller tests.
  */
@@ -19,9 +20,12 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class TagControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
-    private ?EntityManagerInterface $entity_manager;
-    private ?TagServiceInterface $tag_service;
+    private ?EntityManagerInterface $entityManager;
+    private ?TagServiceInterface $tagService;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,14 +33,14 @@ class TagControllerTest extends WebTestCase
         $this->client = static::createClient();
 
         $container = static::getContainer();
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
-        $this->tag_service = $container->get(TagService::class);
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
+        $this->tagService = $container->get(TagService::class);
     }
 
     /**
      * Test '/tags' route.
      */
-    public function test_tag_page_render_default(): void
+    public function testTagPageRenderDefault(): void
     {
         // when
         $this->client->request('GET', '/tags');
@@ -44,16 +48,16 @@ class TagControllerTest extends WebTestCase
         // then
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
+        $responseContent = $this->client->getResponse()->getContent();
 
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test '/tags/{id}' route.
      */
-    public function test_tag_page_render_read(): void
+    public function testTagPageRenderRead(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
@@ -68,34 +72,34 @@ class TagControllerTest extends WebTestCase
         $tag->setSlug('tag_slug');
         $tag->setAuthor($user);
 
-        $this->entity_manager->persist($user);
-        $this->entity_manager->persist($tag);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($tag);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
-        $this->client->request('GET', '/tags/' . $tag->getId());
+        $this->client->request('GET', '/tags/'.$tag->getId());
 
         // then
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test '/tags/create' route.
      */
-    public function test_tag_page_render_create(): void
+    public function testTagPageRenderCreate(): void
     {
         $user = new User();
         $user->setEmail('test@example.com');
         $user->setPassword('password_1');
         $user->setUsername('test');
 
-        $this->entity_manager->persist($user);
-        $this->entity_manager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         $this->client->loginUser($user);
         $this->client->catchExceptions(false);
@@ -104,15 +108,15 @@ class TagControllerTest extends WebTestCase
         // then
         $this->assertResponseIsSuccessful();
 
-        $response_content = $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('<html', $response_content);
-        $this->assertStringContainsString('</html>', $response_content);
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('<html', $responseContent);
+        $this->assertStringContainsString('</html>', $responseContent);
     }
 
     /**
      * Test create.
      */
-    public function test_tag_create(): void
+    public function testTagCreate(): void
     {
         try {
             // given
@@ -121,8 +125,8 @@ class TagControllerTest extends WebTestCase
             $user->setPassword('password_1');
             $user->setUsername('test');
 
-            $this->entity_manager->persist($user);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             $this->client->loginUser($user);
             $this->client->catchExceptions(false);
@@ -139,14 +143,14 @@ class TagControllerTest extends WebTestCase
             $this->client->followRedirect();
             $this->assertResponseIsSuccessful();
 
-            $this->entity_manager->clear();
+            $this->entityManager->clear();
 
-            $tag_repository = $this->entity_manager->getRepository(Tag::class);
-            $saved_tag = $tag_repository->findOneBy(['name' => 'tag_name']);
+            $tagRepository = $this->entityManager->getRepository(Tag::class);
+            $savedTag = $tagRepository->findOneBy(['name' => 'tag_name']);
 
-            $this->assertNotNull($saved_tag);
-            $this->assertEquals('tag_name', $saved_tag->getName());
-            $this->assertEquals('test', $saved_tag->getAuthor()->getUsername());
+            $this->assertNotNull($savedTag);
+            $this->assertEquals('tag_name', $savedTag->getName());
+            $this->assertEquals('test', $savedTag->getAuthor()->getUsername());
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -159,7 +163,7 @@ class TagControllerTest extends WebTestCase
     /**
      * Test edit.
      */
-    public function test_tag_edit(): void
+    public function testTagEdit(): void
     {
         try {
             // given
@@ -176,15 +180,15 @@ class TagControllerTest extends WebTestCase
             $tag->setSlug('tag_1');
             $tag->setAuthor($user);
 
-            $this->entity_manager->persist($user);
-            $this->entity_manager->persist($tag);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->persist($tag);
+            $this->entityManager->flush();
 
             $this->client->loginUser($user);
             $this->client->catchExceptions(false);
 
             // when
-            $this->client->request('GET', '/tags/' . $tag->getId() . '/edit');
+            $this->client->request('GET', '/tags/'.$tag->getId().'/edit');
             $this->client->submitForm('form-submit-button', [
                 'tag[name]' => 'tag_2',
             ]);
@@ -195,13 +199,13 @@ class TagControllerTest extends WebTestCase
             $this->client->followRedirect();
             $this->assertResponseIsSuccessful();
 
-            $this->entity_manager->clear();
+            $this->entityManager->clear();
 
-            $tag_repository = $this->entity_manager->getRepository(Tag::class);
-            $updated_tag = $tag_repository->find($tag->getId());
+            $tagRepository = $this->entityManager->getRepository(Tag::class);
+            $updatedTag = $tagRepository->find($tag->getId());
 
-            $this->assertNotNull($updated_tag);
-            $this->assertEquals('tag_2', $updated_tag->getName());
+            $this->assertNotNull($updatedTag);
+            $this->assertEquals('tag_2', $updatedTag->getName());
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -214,7 +218,7 @@ class TagControllerTest extends WebTestCase
     /**
      * Test delete.
      */
-    public function test_tag_delete(): void
+    public function testTagDelete(): void
     {
         try {
             // given
@@ -231,15 +235,15 @@ class TagControllerTest extends WebTestCase
             $tag->setSlug('tag_slug');
             $tag->setAuthor($user);
 
-            $this->entity_manager->persist($user);
-            $this->entity_manager->persist($tag);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->persist($tag);
+            $this->entityManager->flush();
 
             $this->client->loginUser($user);
             $this->client->catchExceptions(false);
 
             // when
-            $this->client->request('GET', '/tags/' . $tag->getId() . '/delete');
+            $this->client->request('GET', '/tags/'.$tag->getId().'/delete');
             $this->client->submitForm('form-submit-button');
 
             // then
@@ -248,12 +252,12 @@ class TagControllerTest extends WebTestCase
             $this->client->followRedirect();
             $this->assertResponseIsSuccessful();
 
-            $this->entity_manager->clear();
+            $this->entityManager->clear();
 
-            $tag_repository = $this->entity_manager->getRepository(Tag::class);
-            $deleted_tag = $tag_repository->find($tag->getId());
+            $tagRepository = $this->entityManager->getRepository(Tag::class);
+            $deletedTag = $tagRepository->find($tag->getId());
 
-            $this->assertNull($deleted_tag);
+            $this->assertNull($deletedTag);
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),

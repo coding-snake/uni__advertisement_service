@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Topic repository tests.
  */
@@ -15,8 +16,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 class TopicRepositoryTest extends KernelTestCase
 {
-    private ?EntityManagerInterface $entity_manager;
-    private ?TopicRepository $topic_repository;
+    private ?EntityManagerInterface $entityManager;
+    private ?TopicRepository $topicRepository;
 
     /**
      * Set up tests.
@@ -27,14 +28,14 @@ class TopicRepositoryTest extends KernelTestCase
 
         $container = static::getContainer();
 
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
-        $this->topic_repository = $this->entity_manager->getRepository(Topic::class);
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
+        $this->topicRepository = $this->entityManager->getRepository(Topic::class);
     }
 
     /**
      * Test save.
      */
-    public function test_save(): void
+    public function testSave(): void
     {
         try {
             // given
@@ -42,10 +43,10 @@ class TopicRepositoryTest extends KernelTestCase
             $topic->setName('topic_name');
 
             // when
-            $this->topic_repository->save($topic);
+            $this->topicRepository->save($topic);
 
             // then
-            $result = $this->topic_repository->find($topic->getId());
+            $result = $this->topicRepository->find($topic->getId());
 
             $this->assertNotNull($result);
             $this->assertEquals('topic_name', $result->getName());
@@ -61,24 +62,24 @@ class TopicRepositoryTest extends KernelTestCase
     /**
      * Test delete.
      */
-    public function test_delete(): void
+    public function testDelete(): void
     {
         try {
             // given
             $topic = new Topic();
             $topic->setName('topic_name');
 
-            $this->entity_manager->persist($topic);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($topic);
+            $this->entityManager->flush();
 
             $id = $topic->getId();
 
             // when
-            $this->topic_repository->delete($topic);
+            $this->topicRepository->delete($topic);
 
             // then
             $this->assertNull(
-                $this->topic_repository->find($id)
+                $this->topicRepository->find($id)
             );
         } catch (\Exception $e) {
             dd([
@@ -92,18 +93,18 @@ class TopicRepositoryTest extends KernelTestCase
     /**
      * Test query all.
      */
-    public function test_query_all(): void
+    public function testQueryAll(): void
     {
         try {
             // given
             $topic = new Topic();
             $topic->setName('topic_name');
 
-            $this->entity_manager->persist($topic);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($topic);
+            $this->entityManager->flush();
 
             // when
-            $result = $this->topic_repository
+            $result = $this->topicRepository
                 ->queryAll()
                 ->getQuery()
                 ->getResult();

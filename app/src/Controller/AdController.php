@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Ad Controller
+ * Ad Controller.
  */
+
 namespace App\Controller;
 
 use App\Entity\Ad;

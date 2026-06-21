@@ -1,7 +1,9 @@
 <?php
+
 /**
- * Ad Entity
+ * Ad Entity.
  */
+
 namespace App\Entity;
 
 use App\Repository\AdRepository;

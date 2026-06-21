@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Account controller tests.
  */
@@ -16,28 +17,31 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class AccountControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
-    private ?EntityManagerInterface $entity_manager;
+    private ?EntityManagerInterface $entityManager;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->client = static::createClient();
         $container = static::getContainer();
-        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
     }
 
     /**
      * Test account index page.
      */
-    public function test_account_index(): void
+    public function testAccountIndex(): void
     {
         try {
             $user = new User();
             $user->setEmail('test@example.com');
             $user->setPassword('password_1');
             $user->setUsername('test_user');
-            $this->entity_manager->persist($user);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             $this->client->loginUser($user);
             $this->client->request('GET', '/account/');
@@ -55,15 +59,15 @@ class AccountControllerTest extends WebTestCase
     /**
      * Test change username.
      */
-    public function test_change_username(): void
+    public function testChangeUsername(): void
     {
         try {
             $user = new User();
             $user->setEmail('test@example.com');
             $user->setPassword('password_1');
             $user->setUsername('original_user');
-            $this->entity_manager->persist($user);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             $this->client->loginUser($user);
 
@@ -76,9 +80,9 @@ class AccountControllerTest extends WebTestCase
             // then
             $this->assertResponseRedirects('/account/');
 
-            $this->entity_manager->clear();
-            $updated_user = $this->entity_manager->getRepository(User::class)->find($user->getId());
-            $this->assertEquals('new_name', $updated_user->getUsername());
+            $this->entityManager->clear();
+            $updatedUser = $this->entityManager->getRepository(User::class)->find($user->getId());
+            $this->assertEquals('new_name', $updatedUser->getUsername());
         } catch (\Exception $e) {
             dd([
                 'Error' => $e->getMessage(),
@@ -91,15 +95,15 @@ class AccountControllerTest extends WebTestCase
     /**
      * Test change password.
      */
-    public function test_change_password(): void
+    public function testChangePassword(): void
     {
         try {
             $user = new User();
             $user->setEmail('test@example.com');
             $user->setPassword('old_password');
             $user->setUsername('test_user');
-            $this->entity_manager->persist($user);
-            $this->entity_manager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             $this->assertInstanceOf(User::class, $user);
 
