@@ -1,4 +1,7 @@
 <?php
+/**
+ * Tag service tests.
+ */
 
 namespace App\Tests\Service;
 
@@ -7,72 +10,111 @@ use App\Repository\TagRepository;
 use App\Service\TagService;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
+/**
+ * Class TagServiceTest.
+ */
 class TagServiceTest extends TestCase
 {
-    private TagRepository|MockObject $tagRepository;
+    private TagRepository|MockObject $tag_repository;
     private PaginatorInterface|MockObject $paginator;
-    private TagService $tagService;
+    private TagService $tag_service;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
-        $this->tagRepository = $this->createMock(TagRepository::class);
+        $this->tag_repository = $this->createMock(TagRepository::class);
         $this->paginator = $this->createMock(PaginatorInterface::class);
 
-        $this->tagService = new TagService($this->tagRepository, $this->paginator);
+        $this->tag_service = new TagService($this->tag_repository, $this->paginator);
     }
 
-    public function testGetPaginatedList(): void
+    /**
+     * Test get paginated list.
+     */
+    public function test_get_paginated_list(): void
     {
-        // given
-        $page = 1;
-        $expectedResult = $this->createMock(PaginationInterface::class);
+        try {
+            // given
+            $page = 1;
+            $expected_result = $this->createMock(PaginationInterface::class);
 
-        $this->tagRepository->expects($this->once())
-            ->method('queryAll');
+            $this->tag_repository->expects($this->once())
+                ->method('queryAll');
 
-        $this->paginator->expects($this->once())
-            ->method('paginate')
-            ->willReturn($expectedResult);
+            $this->paginator->expects($this->once())
+                ->method('paginate')
+                ->willReturn($expected_result);
 
-        // when
-        $result = $this->tagService->getPaginatedList($page);
+            // when
+            $result = $this->tag_service->getPaginatedList($page);
 
-        // then
-        $this->assertSame($expectedResult, $result);
+            // then
+            $this->assertSame($expected_result, $result);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testSaveNewTagSetsDates(): void
+    /**
+     * Test save new tag.
+     */
+    public function test_save_new_tag_sets_dates(): void
     {
-        // given
-        $tag = new Tag();
+        try {
+            // given
+            $tag = new Tag();
 
-        $this->tagRepository->expects($this->once())
-            ->method('save')
-            ->with($tag);
+            $this->tag_repository->expects($this->once())
+                ->method('save')
+                ->with($tag);
 
-        // when
-        $this->tagService->save($tag);
+            // when
+            $this->tag_service->save($tag);
 
-        // then
-        $this->assertNotNull($tag->getCreatedAt(), 'Created date should be set.');
-        $this->assertNotNull($tag->getUpdatedAt(), 'Updated date should be set.');
+            // then
+            $this->assertNotNull($tag->getCreatedAt());
+            $this->assertNotNull($tag->getUpdatedAt());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testDelete(): void
+    /**
+     * Test delete.
+     */
+    public function test_delete(): void
     {
-        // given
-        $tag = new Tag();
+        try {
+            // given
+            $tag = new Tag();
 
-        $this->tagRepository->expects($this->once())
-            ->method('delete')
-            ->with($tag);
+            $this->tag_repository->expects($this->once())
+                ->method('delete')
+                ->with($tag);
 
-        // when
-        $this->tagService->delete($tag);
+            // when
+            $this->tag_service->delete($tag);
 
-        // then=
+            // then
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

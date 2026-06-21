@@ -1,4 +1,7 @@
 <?php
+/**
+ * Tag repository tests.
+ */
 
 namespace App\Tests\Repository;
 
@@ -7,72 +10,113 @@ use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
+/**
+ * Class TagRepositoryTest.
+ */
 class TagRepositoryTest extends KernelTestCase
 {
-    private ?EntityManagerInterface $entityManager;
-    private ?TagRepository $tagRepository;
+    private ?EntityManagerInterface $entity_manager;
+    private ?TagRepository $tag_repository;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
         self::bootKernel();
 
         $container = static::getContainer();
 
-        $this->entityManager = $container->get('doctrine.orm.entity_manager');
-        $this->tagRepository = $this->entityManager->getRepository(Tag::class);
+        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
+        $this->tag_repository = $this->entity_manager->getRepository(Tag::class);
     }
 
-    public function testSave(): void
+    /**
+     * Test save.
+     */
+    public function test_save(): void
     {
-        $tag = new Tag();
-        $tag->setName('Test Tag');
+        try {
+            // given
+            $tag = new Tag();
+            $tag->setName('tag_name');
 
-        $this->tagRepository->save($tag);
+            // when
+            $this->tag_repository->save($tag);
 
-        $result = $this->tagRepository->find($tag->getId());
+            // then
+            $result = $this->tag_repository->find($tag->getId());
 
-        $this->assertNotNull($result);
-        $this->assertEquals('Test Tag', $result->getName());
+            $this->assertNotNull($result);
+            $this->assertEquals('tag_name', $result->getName());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testDelete(): void
+    /**
+     * Test delete.
+     */
+    public function test_delete(): void
     {
-        $tag = new Tag();
-        $tag->setName('Tag to delete');
+        try {
+            // given
+            $tag = new Tag();
+            $tag->setName('tag_name');
 
-        $this->entityManager->persist($tag);
-        $this->entityManager->flush();
+            $this->entity_manager->persist($tag);
+            $this->entity_manager->flush();
 
-        $id = $tag->getId();
+            $id = $tag->getId();
 
-        $this->tagRepository->delete($tag);
+            // when
+            $this->tag_repository->delete($tag);
 
-        $this->assertNull(
-            $this->tagRepository->find($id)
-        );
+            // then
+            $this->assertNull(
+                $this->tag_repository->find($id)
+            );
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testQueryAll(): void
+    /**
+     * Test query all.
+     */
+    public function test_query_all(): void
     {
-        $tag = new Tag();
-        $tag->setName('Unique Tag ' . uniqid());
+        try {
+            // given
+            $tag = new Tag();
+            $tag->setName('tag_name');
 
-        $this->entityManager->persist($tag);
-        $this->entityManager->flush();
+            $this->entity_manager->persist($tag);
+            $this->entity_manager->flush();
 
-        $result = $this->tagRepository
-            ->queryAll()
-            ->getQuery()
-            ->getResult();
+            // when
+            $result = $this->tag_repository
+                ->queryAll()
+                ->getQuery()
+                ->getResult();
 
-        $this->assertNotEmpty($result);
-        $this->assertContainsOnlyInstancesOf(Tag::class, $result);
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        $this->entityManager->close();
-        $this->entityManager = null;
+            // then
+            $this->assertNotEmpty($result);
+            $this->assertContainsOnlyInstancesOf(Tag::class, $result);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

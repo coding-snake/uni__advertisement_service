@@ -72,8 +72,8 @@ class AccountController extends AbstractController
     #[Route('/change_password', name: 'change_password', methods: ['GET', 'POST'])]
     public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
-        assert($user instanceof User);
 
         $form = $this->createForm(ChangePasswordType::class, $user);
         $form->handleRequest($request);

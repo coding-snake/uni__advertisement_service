@@ -1,4 +1,7 @@
 <?php
+/**
+ * Topic repository tests.
+ */
 
 namespace App\Tests\Repository;
 
@@ -7,73 +10,113 @@ use App\Repository\TopicRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
+/**
+ * Class TopicRepositoryTest.
+ */
 class TopicRepositoryTest extends KernelTestCase
 {
-    private ?EntityManagerInterface $entityManager;
-    private ?TopicRepository $topicRepository;
+    private ?EntityManagerInterface $entity_manager;
+    private ?TopicRepository $topic_repository;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
         self::bootKernel();
 
         $container = static::getContainer();
 
-        $this->entityManager = $container->get('doctrine.orm.entity_manager');
-        $this->topicRepository = $this->entityManager->getRepository(Topic::class);
+        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
+        $this->topic_repository = $this->entity_manager->getRepository(Topic::class);
     }
 
-    public function testSave(): void
+    /**
+     * Test save.
+     */
+    public function test_save(): void
     {
-        $topic = new Topic();
-        $topic->setName('Test Topic');
+        try {
+            // given
+            $topic = new Topic();
+            $topic->setName('topic_name');
 
-        $this->topicRepository->save($topic);
+            // when
+            $this->topic_repository->save($topic);
 
-        $result = $this->topicRepository->find($topic->getId());
+            // then
+            $result = $this->topic_repository->find($topic->getId());
 
-        $this->assertNotNull($result);
-        $this->assertEquals('Test Topic', $result->getName());
+            $this->assertNotNull($result);
+            $this->assertEquals('topic_name', $result->getName());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testDelete(): void
+    /**
+     * Test delete.
+     */
+    public function test_delete(): void
     {
-        $topic = new Topic();
-        $topic->setName('Topic to delete');
+        try {
+            // given
+            $topic = new Topic();
+            $topic->setName('topic_name');
 
-        $this->entityManager->persist($topic);
-        $this->entityManager->flush();
+            $this->entity_manager->persist($topic);
+            $this->entity_manager->flush();
 
-        $id = $topic->getId();
+            $id = $topic->getId();
 
-        $this->topicRepository->delete($topic);
+            // when
+            $this->topic_repository->delete($topic);
 
-        $this->assertNull(
-            $this->topicRepository->find($id)
-        );
+            // then
+            $this->assertNull(
+                $this->topic_repository->find($id)
+            );
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testQueryAll(): void
+    /**
+     * Test query all.
+     */
+    public function test_query_all(): void
     {
-        $topic = new Topic();
-        $topic->setName('New Topic');
+        try {
+            // given
+            $topic = new Topic();
+            $topic->setName('topic_name');
 
-        $this->entityManager->persist($topic);
-        $this->entityManager->flush();
+            $this->entity_manager->persist($topic);
+            $this->entity_manager->flush();
 
-        $result = $this->topicRepository
-            ->queryAll()
-            ->getQuery()
-            ->getResult();
+            // when
+            $result = $this->topic_repository
+                ->queryAll()
+                ->getQuery()
+                ->getResult();
 
-        $this->assertNotEmpty($result);
-        $this->assertContainsOnlyInstancesOf(Topic::class, $result);
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        
-        $this->entityManager->close();
-        $this->entityManager = null;
+            // then
+            $this->assertNotEmpty($result);
+            $this->assertContainsOnlyInstancesOf(Topic::class, $result);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

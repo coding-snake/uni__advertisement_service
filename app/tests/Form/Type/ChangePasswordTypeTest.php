@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Change password type tests.
  */
@@ -17,9 +16,8 @@ use Symfony\Component\Validator\Validation;
  */
 class ChangePasswordTypeTest extends TypeTestCase
 {
-
     /**
-     * Ad to pass the whole builder correctly
+     * Add to pass the whole builder correctly.
      */
     protected function getExtensions(): array
     {
@@ -29,65 +27,89 @@ class ChangePasswordTypeTest extends TypeTestCase
     }
 
     /**
-     * Test Build Form
+     * Test build form.
      */
-    public function testBuildForm(): void
+    public function test_build_form(): void
     {
-        // given
-        $formData = [
-            'plainPassword' => [
-                'first' => 'pass',
-                'second' => 'pass',
-            ],
-        ];
+        try {
+            // given
+            $form_data = [
+                'plainPassword' => [
+                    'first' => 'password_1',
+                    'second' => 'password_1',
+                ],
+            ];
 
-        $form = $this->factory->create(ChangePasswordType::class);
+            $form = $this->factory->create(ChangePasswordType::class);
 
-        // when
-        $form->submit($formData);
+            // when
+            $form->submit($form_data);
 
-        // then
-        $this->assertTrue($form->isSynchronized());
-        $this->assertTrue($form->has('plainPassword'));
-        $this->assertEquals('pass', $form->get('plainPassword')->getData());
+            // then
+            $this->assertTrue($form->isSynchronized());
+            $this->assertTrue($form->has('plainPassword'));
+            $this->assertEquals('password_1', $form->get('plainPassword')->getData());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
     /**
-     * Test conflicting passwords
+     * Test password conflict.
      */
-    public function testPasswordConflict(): void
+    public function test_password_conflict(): void
     {
-        // given
-        $formData = [
-            'plainPassword' => [
-                'first' => 'pass',
-                'second' => 'not',
-            ],
-        ];
+        try {
+            // given
+            $form_data = [
+                'plainPassword' => [
+                    'first' => 'password_1',
+                    'second' => 'password_2',
+                ],
+            ];
 
-        $form = $this->factory->create(ChangePasswordType::class);
+            $form = $this->factory->create(ChangePasswordType::class);
 
-        // when
-        $form->submit($formData);
+            // when
+            $form->submit($form_data);
 
-        // then
-        $this->assertFalse($form->isValid());
+            // then
+            $this->assertFalse($form->isValid());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
     /**
-     * Test Configuration
+     * Test configure options.
      */
-    public function testConfigureOptions(): void
+    public function test_configure_options(): void
     {
-        // given
-        $resolver = new OptionsResolver();
-        $type = new ChangePasswordType();
+        try {
+            // given
+            $resolver = new OptionsResolver();
+            $type = new ChangePasswordType();
 
-        // when
-        $type->configureOptions($resolver);
+            // when
+            $type->configureOptions($resolver);
 
-        // then
-        $resolvedOptions = $resolver->resolve();
-        $this->assertIsArray($resolvedOptions);
+            // then
+            $resolved_options = $resolver->resolve();
+            $this->assertIsArray($resolved_options);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

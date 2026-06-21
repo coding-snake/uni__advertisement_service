@@ -1,4 +1,7 @@
 <?php
+/**
+ * Topic service tests.
+ */
 
 namespace App\Tests\Service;
 
@@ -8,125 +11,200 @@ use App\Repository\TopicRepository;
 use App\Service\TopicService;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
+/**
+ * Class TopicServiceTest.
+ */
 class TopicServiceTest extends TestCase
 {
-    private TopicRepository|MockObject $topicRepository;
-    private AdRepository|MockObject $adRepository;
+    private TopicRepository|MockObject $topic_repository;
+    private AdRepository|MockObject $ad_repository;
     private PaginatorInterface|MockObject $paginator;
-    private TopicService $topicService;
+    private TopicService $topic_service;
 
+    /**
+     * Set up tests.
+     */
     protected function setUp(): void
     {
-        $this->topicRepository = $this->createMock(TopicRepository::class);
-        $this->adRepository = $this->createMock(AdRepository::class);
+        $this->topic_repository = $this->createMock(TopicRepository::class);
+        $this->ad_repository = $this->createMock(AdRepository::class);
         $this->paginator = $this->createMock(PaginatorInterface::class);
 
-        $this->topicService = new TopicService(
-            $this->topicRepository, 
-            $this->paginator, 
-            $this->adRepository
+        $this->topic_service = new TopicService(
+            $this->topic_repository,
+            $this->paginator,
+            $this->ad_repository
         );
     }
 
-    public function testGetPaginatedList(): void
+    /**
+     * Test get paginated list.
+     */
+    public function test_get_paginated_list(): void
     {
-        // given
-        $page = 1;
-        $expectedResult = $this->createMock(PaginationInterface::class);
+        try {
+            // given
+            $page = 1;
+            $expected_result = $this->createMock(PaginationInterface::class);
 
-        $this->topicRepository->expects($this->once())
-            ->method('queryAll');
+            $this->topic_repository->expects($this->once())
+                ->method('queryAll');
 
-        $this->paginator->expects($this->once())
-            ->method('paginate')
-            ->willReturn($expectedResult);
+            $this->paginator->expects($this->once())
+                ->method('paginate')
+                ->willReturn($expected_result);
 
-        // when
-        $result = $this->topicService->getPaginatedList($page);
+            // when
+            $result = $this->topic_service->getPaginatedList($page);
 
-        // then
-        $this->assertSame($expectedResult, $result);
+            // then
+            $this->assertSame($expected_result, $result);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testSaveNewTopicSetsDates(): void
+    /**
+     * Test save new topic.
+     */
+    public function test_save_new_topic_sets_dates(): void
     {
-        // given
-        $topic = new Topic();
+        try {
+            // given
+            $topic = new Topic();
 
-        $this->topicRepository->expects($this->once())
-            ->method('save')
-            ->with($topic);
+            $this->topic_repository->expects($this->once())
+                ->method('save')
+                ->with($topic);
 
-        // when
-        $this->topicService->save($topic);
+            // when
+            $this->topic_service->save($topic);
 
-        // then
-        $this->assertNotNull($topic->getCreatedAt());
-        $this->assertNotNull($topic->getUpdatedAt());
+            // then
+            $this->assertNotNull($topic->getCreatedAt());
+            $this->assertNotNull($topic->getUpdatedAt());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testDelete(): void
+    /**
+     * Test delete.
+     */
+    public function test_delete(): void
     {
-        // given
-        $topic = new Topic();
+        try {
+            // given
+            $topic = new Topic();
 
-        $this->topicRepository->expects($this->once())
-            ->method('delete')
-            ->with($topic);
+            $this->topic_repository->expects($this->once())
+                ->method('delete')
+                ->with($topic);
 
-        // when
-        $this->topicService->delete($topic);
+            // when
+            $this->topic_service->delete($topic);
+
+            // then
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testCanBeDeletedReturnsTrueWhenNoAdsExist(): void
+    /**
+     * Test can be deleted true.
+     */
+    public function test_can_be_deleted_returns_true_when_no_ads_exist(): void
     {
-        // given
-        $topic = new Topic();
-        $this->adRepository->expects($this->once())
-            ->method('countByTopic')
-            ->with($topic)
-            ->willReturn(0);
+        try {
+            // given
+            $topic = new Topic();
 
-        // when
-        $result = $this->topicService->canBeDeleted($topic);
+            $this->ad_repository->expects($this->once())
+                ->method('countByTopic')
+                ->with($topic)
+                ->willReturn(0);
 
-        // then
-        $this->assertTrue($result);
+            // when
+            $result = $this->topic_service->canBeDeleted($topic);
+
+            // then
+            $this->assertTrue($result);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testCanBeDeletedReturnsFalseWhenAdsExist(): void
+    /**
+     * Test can be deleted false.
+     */
+    public function test_can_be_deleted_returns_false_when_ads_exist(): void
     {
-        // given
-        $topic = new Topic();
-        $this->adRepository->expects($this->once())
-            ->method('countByTopic')
-            ->with($topic)
-            ->willReturn(5);
+        try {
+            // given
+            $topic = new Topic();
 
-        // when
-        $result = $this->topicService->canBeDeleted($topic);
+            $this->ad_repository->expects($this->once())
+                ->method('countByTopic')
+                ->with($topic)
+                ->willReturn(5);
 
-        // then
-        $this->assertFalse($result);
+            // when
+            $result = $this->topic_service->canBeDeleted($topic);
+
+            // then
+            $this->assertFalse($result);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
-    public function testCanBeDeletedReturnsFalseOnException(): void
+    /**
+     * Test can be deleted exception.
+     */
+    public function test_can_be_deleted_returns_false_on_exception(): void
     {
-        // given
-        $topic = new Topic();
-        
-        // Configure the mock to throw an exception when the repository method is called
-        $this->adRepository->expects($this->once())
-            ->method('countByTopic')
-            ->willThrowException(new \Doctrine\ORM\NoResultException());
+        try {
+            // given
+            $topic = new Topic();
 
-        // when
-        $result = $this->topicService->canBeDeleted($topic);
+            $this->ad_repository->expects($this->once())
+                ->method('countByTopic')
+                ->willThrowException(new \Doctrine\ORM\NoResultException());
 
-        // then
-        $this->assertFalse($result, 'Should return false when a NoResultException occurs.');
+            // when
+            $result = $this->topic_service->canBeDeleted($topic);
+
+            // then
+            $this->assertFalse($result);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

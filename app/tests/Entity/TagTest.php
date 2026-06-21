@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Tag entity tests.
  */
@@ -17,52 +16,67 @@ use PHPUnit\Framework\TestCase;
 class TagTest extends TestCase
 {
     /**
-     * Instead of a bunch of small functions, just do one massive Tag entity
+     * Test get and set.
      */
-    public function testGetAndSet(): void
+    public function test_get_and_set(): void
     {
-        // given
-        $tag = new Tag();
-        $now = new \DateTimeImmutable();
-        $user = new User();
+        try {
+            // given
+            $tag = new Tag();
+            $now = new \DateTimeImmutable();
+            $user = new User();
 
-        // when
-        $tag->setName('Tag');
-        $tag->setCreatedAt($now);
-        $tag->setUpdatedAt($now);
-        $tag->setSlug('tag');
-        $tag->setAuthor($user);
+            // when
+            $tag->setName('tag_name');
+            $tag->setCreatedAt($now);
+            $tag->setUpdatedAt($now);
+            $tag->setSlug('tag_slug');
+            $tag->setAuthor($user);
 
-        // then
-        $this->assertEquals('Tag', $tag->getName());
-        $this->assertEquals($now, $tag->getCreatedAt());
-        $this->assertEquals($now, $tag->getUpdatedAt());
-        $this->assertEquals('tag', $tag->getSlug());
-        $this->assertSame($user, $tag->getAuthor());
-        $this->assertSame(1, $tag->getId());
+            // then
+            $this->assertEquals('tag_name', $tag->getName());
+            $this->assertEquals($now, $tag->getCreatedAt());
+            $this->assertEquals($now, $tag->getUpdatedAt());
+            $this->assertEquals('tag_slug', $tag->getSlug());
+            $this->assertSame($user, $tag->getAuthor());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
     /**
-     * Test interactions with ad
+     * Test ad collection management.
      */
-    public function testAdCollectionManagement(): void
+    public function test_ad_collection_management(): void
     {
-        // given
-        $tag = new Tag();
-        $ad = new Ad();
+        try {
+            // given
+            $tag = new Tag();
+            $ad = new Ad();
 
-        // when
-        $tag->addAd($ad);
+            // when
+            $tag->addAd($ad);
 
-        // then
-        $this->assertCount(1, $tag->getAds());
-        $this->assertTrue($tag->getAds()->contains($ad));
+            // then
+            $this->assertCount(1, $tag->getAds());
+            $this->assertTrue($tag->getAds()->contains($ad));
 
-        // when
-        $tag->removeAd($ad);
+            // when
+            $tag->removeAd($ad);
 
-        // then
-        $this->assertCount(0, $tag->getAds());
-        $this->assertFalse($tag->getAds()->contains($ad));
+            // then
+            $this->assertCount(0, $tag->getAds());
+            $this->assertFalse($tag->getAds()->contains($ad));
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

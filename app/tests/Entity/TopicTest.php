@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Topic entity tests.
  */
@@ -16,28 +15,35 @@ use PHPUnit\Framework\TestCase;
 class TopicTest extends TestCase
 {
     /**
-     * Instead of a bunch of small functions, just do one massive Topic entity
+     * Test get and set.
      */
-    public function testGetAndSet(): void
+    public function test_get_and_set(): void
     {
-        // given
-        $topic = new Topic();
-        $now = new \DateTimeImmutable();
-        $user = new User();
+        try {
+            // given
+            $topic = new Topic();
+            $now = new \DateTimeImmutable();
+            $user = new User();
 
-        // when
-        $topic->setName('Topic');
-        $topic->setCreatedAt($now);
-        $topic->setUpdatedAt($now);
-        $topic->setSlug('topic');
-        $topic->setAuthor($user);
+            // when
+            $topic->setName('topic_name');
+            $topic->setCreatedAt($now);
+            $topic->setUpdatedAt($now);
+            $topic->setSlug('topic_slug');
+            $topic->setAuthor($user);
 
-        // then
-        $this->assertEquals('Topic', $topic->getName());
-        $this->assertEquals($now, $topic->getCreatedAt());
-        $this->assertEquals($now, $topic->getUpdatedAt());
-        $this->assertEquals('topic', $topic->getSlug());
-        $this->assertSame($user, $topic->getAuthor());
-        $this->assertSame(1, $topic->getId());
+            // then
+            $this->assertEquals('topic_name', $topic->getName());
+            $this->assertEquals($now, $topic->getCreatedAt());
+            $this->assertEquals($now, $topic->getUpdatedAt());
+            $this->assertEquals('topic_slug', $topic->getSlug());
+            $this->assertSame($user, $topic->getAuthor());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Tag type tests.
  */
@@ -29,56 +28,80 @@ class TagTypeTest extends TypeTestCase
     }
 
     /**
-     * Test Build Form
+     * Test build form.
      */
-    public function testBuildForm(): void
+    public function test_build_form(): void
     {
-        // given
-        $formData = [
-            'name' => 'tag',
-        ];
+        try {
+            // given
+            $form_data = [
+                'name' => 'tag_name',
+            ];
 
-        $tag = new Tag();
-        $form = $this->factory->create(TagType::class, $tag);
+            $tag = new Tag();
+            $form = $this->factory->create(TagType::class, $tag);
 
-        // when
-        $form->submit($formData);
+            // when
+            $form->submit($form_data);
 
-        // then
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals('tag', $tag->getName());
-        $this->assertEquals('tag', $form->get('name')->getData());
+            // then
+            $this->assertTrue($form->isSynchronized());
+            $this->assertEquals('tag_name', $tag->getName());
+            $this->assertEquals('tag_name', $form->get('name')->getData());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
     /**
-     * Test Configuration
+     * Test configure options.
      */
-    public function testConfigureOptions(): void
+    public function test_configure_options(): void
     {
-        // given
-        $resolver = new OptionsResolver();
-        $type = new TagType();
+        try {
+            // given
+            $resolver = new OptionsResolver();
+            $type = new TagType();
 
-        // when
-        $type->configureOptions($resolver);
+            // when
+            $type->configureOptions($resolver);
 
-        // then
-        $resolvedOptions = $resolver->resolve();
-        $this->assertEquals(Tag::class, $resolvedOptions['data_class']);
+            // then
+            $resolved_options = $resolver->resolve();
+            $this->assertEquals(Tag::class, $resolved_options['data_class']);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
     /**
-     * Test Block Prefix
+     * Test get block prefix.
      */
-    public function testGetBlockPrefix(): void
+    public function test_get_block_prefix(): void
     {
-        // given
-        $type = new TagType();
+        try {
+            // given
+            $type = new TagType();
 
-        // when
-        $result = $type->getBlockPrefix();
+            // when
+            $result = $type->getBlockPrefix();
 
-        // then
-        $this->assertEquals('tag', $result);
+            // then
+            $this->assertEquals('tag', $result);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

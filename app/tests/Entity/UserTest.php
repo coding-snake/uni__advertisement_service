@@ -1,5 +1,4 @@
 <?php
-
 /**
  * User entity tests.
  */
@@ -16,59 +15,83 @@ use PHPUnit\Framework\TestCase;
 class UserTest extends TestCase
 {
     /**
-     * Instead of a bunch of small functions, just do one massive User entity
+     * Test get and set.
      */
-    public function testGetAndSet(): void
+    public function test_get_and_set(): void
     {
-        // given
-        $user = new User();
+        try {
+            // given
+            $user = new User();
 
-        // when
-        $user->setEmail('test@example.com');
-        $user->setPassword('password');
-        $user->setUsername('test');
+            // when
+            $user->setEmail('test@example.com');
+            $user->setPassword('password_1');
+            $user->setUsername('test');
 
-        // then
-        $this->assertEquals('test@example.com', $user->getEmail());
-        $this->assertEquals('test@example.com', $user->getUserIdentifier());
-        $this->assertEquals('password', $user->getPassword());
-        $this->assertEquals('test', $user->getUsername());
-        $this->assertNull($user->getId());
+            // then
+            $this->assertEquals('test@example.com', $user->getEmail());
+            $this->assertEquals('test@example.com', $user->getUserIdentifier());
+            $this->assertEquals('password_1', $user->getPassword());
+            $this->assertEquals('test', $user->getUsername());
+            $this->assertNull($user->getId());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
     /**
-     * Test roles
+     * Test roles.
      */
-    public function testRoles(): void
+    public function test_roles(): void
     {
-        // given
-        $user = new User();
+        try {
+            // given
+            $user = new User();
 
-        // when
-        // then
-        $this->assertContains(UserRole::ROLE_USER->value, $user->getRoles());
+            // then
+            $this->assertContains(UserRole::ROLE_USER->value, $user->getRoles());
 
-        // when
-        $user->setRoles([UserRole::ROLE_ADMIN->value]);
+            // when
+            $user->setRoles([UserRole::ROLE_ADMIN->value]);
 
-        // then
-        $roles = $user->getRoles();
-        $this->assertContains(UserRole::ROLE_ADMIN->value, $roles);
-        $this->assertCount(2, $roles);
+            // then
+            $roles = $user->getRoles();
+            $this->assertContains(UserRole::ROLE_ADMIN->value, $roles);
+            $this->assertContains(UserRole::ROLE_USER->value, $roles);
+            $this->assertCount(2, $roles);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
     /**
-     * Test erase credentials
+     * Test erase credentials.
      */
-    public function testEraseCredentials(): void
+    public function test_erase_credentials(): void
     {
-        // given
-        $user = new User();
+        try {
+            // given
+            $user = new User();
 
-        // when
-        $user->eraseCredentials();
+            // when
+            $user->eraseCredentials();
 
-        // then
-        $this->assertTrue(true);
+            // then
+            $this->assertTrue(true);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

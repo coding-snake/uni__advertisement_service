@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Username type tests.
  */
@@ -18,8 +17,9 @@ use Symfony\Component\Validator\Validation;
  */
 class UsernameTypeTest extends TypeTestCase
 {
+    
     /**
-     * Pass the validator extension to ensure constraints are handled.
+     * Add to pass the whole builder correctly.
      */
     protected function getExtensions(): array
     {
@@ -29,41 +29,57 @@ class UsernameTypeTest extends TypeTestCase
     }
 
     /**
-     * Test Build Form
+     * Test build form.
      */
-    public function testBuildForm(): void
+    public function test_build_form(): void
     {
-        // given
-        $formData = [
-            'username' => 'username',
-        ];
+        try {
+            // given
+            $form_data = [
+                'username' => 'test',
+            ];
 
-        $user = new User();
-        $form = $this->factory->create(UsernameType::class, $user);
+            $user = new User();
+            $form = $this->factory->create(UsernameType::class, $user);
 
-        // when
-        $form->submit($formData);
+            // when
+            $form->submit($form_data);
 
-        // then
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals('username', $user->getUsername());
-        $this->assertTrue($form->has('username'));
+            // then
+            $this->assertTrue($form->isSynchronized());
+            $this->assertEquals('test', $user->getUsername());
+            $this->assertTrue($form->has('username'));
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
     /**
-     * Test Configuration
+     * Test configure options.
      */
-    public function testConfigureOptions(): void
+    public function test_configure_options(): void
     {
-        // given
-        $resolver = new OptionsResolver();
-        $type = new UsernameType();
+        try {
+            // given
+            $resolver = new OptionsResolver();
+            $type = new UsernameType();
 
-        // when
-        $type->configureOptions($resolver);
+            // when
+            $type->configureOptions($resolver);
 
-        // then
-        $resolvedOptions = $resolver->resolve();
-        $this->assertEquals(User::class, $resolvedOptions['data_class']);
+            // then
+            $resolved_options = $resolver->resolve();
+            $this->assertEquals(User::class, $resolved_options['data_class']);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

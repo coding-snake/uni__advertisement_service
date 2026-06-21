@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Topic type tests.
  */
@@ -17,40 +16,56 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TopicTypeTest extends TypeTestCase
 {
     /**
-     * Test Build Form
+     * Test build form.
      */
-    public function testBuildForm(): void
+    public function test_build_form(): void
     {
-        // given
-        $formData = [
-            'name' => 'topic',
-        ];
+        try {
+            // given
+            $form_data = [
+                'name' => 'topic_name',
+            ];
 
-        $topic = new Topic();
-        $form = $this->factory->create(TopicType::class, $topic);
+            $topic = new Topic();
+            $form = $this->factory->create(TopicType::class, $topic);
 
-        // when
-        $form->submit($formData);
+            // when
+            $form->submit($form_data);
 
-        // then
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals('topic', $topic->getName());
+            // then
+            $this->assertTrue($form->isSynchronized());
+            $this->assertEquals('topic_name', $topic->getName());
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 
     /**
-     * Test Configuration
+     * Test configure options.
      */
-    public function testConfigureOptions(): void
+    public function test_configure_options(): void
     {
-        // given
-        $resolver = new OptionsResolver;
-        $type = new TopicType();
+        try {
+            // given
+            $resolver = new OptionsResolver();
+            $type = new TopicType();
 
-        // when
-        $type->configureOptions($resolver);
+            // when
+            $type->configureOptions($resolver);
 
-        // then
-        $resolvedOptions = $resolver->resolve();
-        $this->assertEquals(Topic::class, $resolvedOptions['data_class']);
+            // then
+            $resolved_options = $resolver->resolve();
+            $this->assertEquals(Topic::class, $resolved_options['data_class']);
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }

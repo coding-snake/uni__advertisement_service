@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Ad type functional tests.
  */
@@ -19,62 +18,63 @@ use Symfony\Component\Form\FormFactoryInterface;
  */
 class AdTypeTest extends KernelTestCase
 {
-    /**
-     * Entity manager.
-     */
-    private ?EntityManagerInterface $entityManager;
-
-    /**
-     * Form factory.
-     */
-    private ?FormFactoryInterface $formFactory;
+    private ?EntityManagerInterface $entity_manager;
+    private ?FormFactoryInterface $form_factory;
 
     /**
      * Set up test.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         self::bootKernel();
         $container = static::getContainer();
         
-        $this->entityManager = $container->get('doctrine.orm.entity_manager');
-        $this->formFactory = $container->get('form.factory');
+        $this->entity_manager = $container->get('doctrine.orm.entity_manager');
+        $this->form_factory = $container->get('form.factory');
     }
 
     /**
      * Test submit valid data.
      */
-    public function testSubmitValidData(): void
+    public function test_submit_valid_data(): void
     {
-        // given
-        $topic = new Topic();
-        $topic->setName('Symfony');
+        try {
+            // given
+            $topic = new Topic();
+            $topic->setName('topic_name');
 
-        $tag = new Tag();
-        $tag->setName('PHP');
+            $tag = new Tag();
+            $tag->setName('tag_name');
 
-        $this->entityManager->persist($topic);
-        $this->entityManager->persist($tag);
-        $this->entityManager->flush();
+            $this->entity_manager->persist($topic);
+            $this->entity_manager->persist($tag);
+            $this->entity_manager->flush();
 
-        $ad = new Ad();
-        $form = $this->formFactory->create(AdType::class, $ad);
+            $ad = new Ad();
+            $form = $this->form_factory->create(AdType::class, $ad);
 
-        // when
-        $form->submit([
-            'name' => 'name',
-            'content' => 'content',
-            'topic' => (string) $topic->getId(),
-            'tags' => [(string) $tag->getId()],
-        ]);
+            // when
+            $form->submit([
+                'name' => 'ad_name',
+                'content' => 'ad_content',
+                'topic' => (string) $topic->getId(),
+                'tags' => [(string) $tag->getId()],
+            ]);
 
-        // then
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals('name', $ad->getName());
-        $this->assertEquals('content', $ad->getContent());
-        $this->assertEquals($topic, $ad->getTopic());
+            // then
+            $this->assertTrue($form->isSynchronized());
+            $this->assertEquals('ad_name', $ad->getName());
+            $this->assertEquals('ad_content', $ad->getContent());
+            $this->assertEquals($topic, $ad->getTopic());
 
-        $this->assertCount(1, $ad->getTags());
-        $this->assertTrue($ad->getTags()->contains($tag));
+            $this->assertCount(1, $ad->getTags());
+            $this->assertTrue($ad->getTags()->contains($tag));
+        } catch (\Exception $e) {
+            dd([
+                'Error' => $e->getMessage(),
+                'File'  => $e->getFile(),
+                'Line'  => $e->getLine(),
+            ]);
+        }
     }
 }
