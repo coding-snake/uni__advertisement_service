@@ -9,13 +9,12 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\Type\ChangePasswordType;
 use App\Form\Type\UsernameType;
+use App\Service\AdminServiceInterface;
 use App\Service\UserServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -72,20 +71,20 @@ class AdminController extends AbstractController
     /**
      * Edit user's username action.
      *
-     * @param Request                $request       HTTP request
-     * @param User                   $user          User entity
-     * @param EntityManagerInterface $entityManager Entity manager
+     * @param Request               $request      HTTP request
+     * @param User                  $user         User entity
+     * @param AdminServiceInterface $adminService Admin service
      *
      * @return Response HTTP response
      */
     #[Route('/users/{id}/edit-username', name: 'admin_user_edit_username', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'POST'])]
-    public function editUsername(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    public function editUsername(Request $request, User $user, AdminServiceInterface $adminService): Response
     {
         $form = $this->createForm(UsernameType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $adminService->saveUser($user);
 
             $this->addFlash('success', $this->translator->trans('message.username_changed_successfully'));
 
@@ -101,25 +100,23 @@ class AdminController extends AbstractController
     /**
      * Edit user's password action.
      *
-     * @param Request                     $request        HTTP request
-     * @param User                        $user           User entity
-     * @param UserPasswordHasherInterface $passwordHasher Password hasher
-     * @param EntityManagerInterface      $entityManager  Entity manager
+     * @param Request               $request      HTTP request
+     * @param User                  $user         User entity
+     * @param AdminServiceInterface $adminService Admin service
      *
      * @return Response HTTP response
      */
     #[Route('/users/{id}/edit-password', name: 'admin_user_edit_password', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'POST'])]
-    public function editPassword(Request $request, User $user, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
+    public function editPassword(Request $request, User $user, AdminServiceInterface $adminService): Response
     {
         $form = $this->createForm(ChangePasswordType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var string $newPassword */
             $newPassword = $form->get('plainPassword')->getData();
-            $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
 
-            $user->setPassword($hashedPassword);
-            $entityManager->flush();
+            $adminService->changeUserPassword($user, $newPassword);
 
             $this->addFlash('success', $this->translator->trans('message.password_changed_successfully'));
 

@@ -9,13 +9,12 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\Type\UsernameType;
 use App\Form\Type\ChangePasswordType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\AccountServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Class AccountController.
@@ -38,21 +37,22 @@ class AccountController extends AbstractController
     /**
      * Change username action.
      *
-     * @param Request                $request       HTTP request
-     * @param EntityManagerInterface $entityManager Entity manager
+     * @param Request                 $request        HTTP request
+     * @param AccountServiceInterface $accountService Account service
      *
      * @return Response HTTP response
      */
     #[Route('/change_username', name: 'change_username', methods: ['GET', 'POST'])]
-    public function changeUsername(Request $request, EntityManagerInterface $entityManager): Response
+    public function changeUsername(Request $request, AccountServiceInterface $accountService): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
 
         $form = $this->createForm(UsernameType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $accountService->save($user);
 
             return $this->redirectToRoute('account_index');
         }
@@ -65,14 +65,13 @@ class AccountController extends AbstractController
     /**
      * Change password action.
      *
-     * @param Request                     $request        HTTP request
-     * @param UserPasswordHasherInterface $passwordHasher Password hasher
-     * @param EntityManagerInterface      $entityManager  Entity manager
+     * @param Request                 $request        HTTP request
+     * @param AccountServiceInterface $accountService Account service
      *
      * @return Response HTTP response
      */
     #[Route('/change_password', name: 'change_password', methods: ['GET', 'POST'])]
-    public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
+    public function changePassword(Request $request, AccountServiceInterface $accountService): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -81,12 +80,10 @@ class AccountController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var string $newPassword */
             $newPassword = $form->get('plainPassword')->getData();
 
-            $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
-            $user->setPassword($hashedPassword);
-
-            $entityManager->flush();
+            $accountService->changePassword($user, $newPassword);
 
             return $this->redirectToRoute('account_index');
         }

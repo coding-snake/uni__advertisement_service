@@ -58,4 +58,11 @@ interface AdServiceInterface
      * @param Ad $ad Ad entity
      */
     public function delete(Ad $ad): void;
+
+    /**
+     * Toggle verification status for an ad.
+     *
+     * @param Ad $ad Ad entity
+     */
+    public function toggleVerification(Ad $ad): void;
 }

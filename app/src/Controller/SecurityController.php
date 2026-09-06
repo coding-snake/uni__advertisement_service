@@ -8,12 +8,11 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\Type\UserType;
+use App\Service\SecurityServiceInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -39,7 +38,6 @@ class SecurityController extends AbstractController
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();
-
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
@@ -62,14 +60,13 @@ class SecurityController extends AbstractController
     /**
      * Register action.
      *
-     * @param Request                     $request            HTTP request
-     * @param UserPasswordHasherInterface $userPasswordHasher Password hasher
-     * @param EntityManagerInterface      $entityManager      Entity manager
+     * @param Request                  $request         HTTP request
+     * @param SecurityServiceInterface $securityService Security service
      *
      * @return Response HTTP response
      */
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, SecurityServiceInterface $securityService): Response
     {
         if ($this->getUser() instanceof UserInterface) {
             return $this->redirectToRoute('home');
@@ -80,16 +77,11 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );
+            /** @var string $plainPassword */
+            $plainPassword = $form->get('password')->getData();
 
             try {
-                $entityManager->persist($user);
-                $entityManager->flush();
+                $securityService->registerUser($user, $plainPassword);
 
                 return $this->redirectToRoute('app_login');
             } catch (UniqueConstraintViolationException) {

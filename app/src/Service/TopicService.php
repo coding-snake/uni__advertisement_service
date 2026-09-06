@@ -103,4 +103,14 @@ class TopicService implements TopicServiceInterface
             return false;
         }
     }
+
+    /**
+     * Count total topics.
+     *
+     * @return int Total count
+     */
+    public function count(): int
+    {
+        return $this->topicRepository->count([]);
+    }
 }

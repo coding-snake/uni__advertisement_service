@@ -21,11 +21,7 @@ class AdService implements AdServiceInterface
     /**
      * Items per page.
      *
-     * Use constants to define configuration options that rarely change instead
-     * of specifying them in app/config/config.yml.
-     * See https://symfony.com/doc/current/best_practices.html#configuration
-     *
-     * @varant int
+     * @var int
      */
     private const PAGINATOR_ITEMS_PER_PAGE = 10;
 
@@ -127,5 +123,16 @@ class AdService implements AdServiceInterface
     public function delete(Ad $ad): void
     {
         $this->adRepository->delete($ad);
+    }
+
+    /**
+     * Toggle verification status for an ad.
+     *
+     * @param Ad $ad Ad entity
+     */
+    public function toggleVerification(Ad $ad): void
+    {
+        $ad->setVerified(!$ad->getVerified());
+        $this->save($ad);
     }
 }

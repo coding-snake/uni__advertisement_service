@@ -45,4 +45,11 @@ interface TopicServiceInterface
      * @return bool Result
      */
     public function canBeDeleted(Topic $topic): bool;
+
+    /**
+     * Count total topics.
+     *
+     * @return int Total count
+     */
+    public function count(): int;
 }

@@ -72,16 +72,9 @@ class UserRepositoryTest extends KernelTestCase
      */
     public function testUpgradePasswordThrowsException(): void
     {
-        // Define the class locally inside the method
-        $invalidUser = new class() implements PasswordAuthenticatedUserInterface {
-            /**
-             * The user password.
-             */
-            public function getPassword(): ?string
-            {
-                return 'password_1';
-            }
-        };
+        // Używamy natywnego mechanizmu PHPUnit do stworzenia "fałszywego" użytkownika.
+        // Rozwiązuje to problem z formatowaniem klas anonimowych przez PHP CS Fixer.
+        $invalidUser = $this->createMock(PasswordAuthenticatedUserInterface::class);
 
         $this->expectException(UnsupportedUserException::class);
         $this->userRepository->upgradePassword($invalidUser, 'password_2');

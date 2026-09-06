@@ -45,8 +45,8 @@ class UserFixtures extends AbstractBaseFixtures
                 'admin'
             )
         );
-
         $this->manager->persist($admin);
+        $this->addReference('user-admin', $admin);
         $this->manager->flush();
     }
 }

@@ -9,6 +9,7 @@ namespace App\Tests\DataFixtures;
 use App\DataFixtures\UserFixtures;
 use App\Entity\Enum\UserRole;
 use App\Entity\User;
+use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
@@ -47,6 +48,10 @@ class UserFixturesTest extends TestCase
 
             $userFixtures = new UserFixtures($mockPasswordHasher);
 
+            $mockReferenceRepository = $this->createMock(ReferenceRepository::class);
+            $userFixtures->setReferenceRepository($mockReferenceRepository);
+
+
             $faker = Factory::create();
             $reflection = new \ReflectionClass($userFixtures);
 
@@ -55,7 +60,7 @@ class UserFixturesTest extends TestCase
 
             // when
             $userFixtures->load($mockManager);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             dd([
                 'Error' => $e->getMessage(),
                 'File'  => $e->getFile(),

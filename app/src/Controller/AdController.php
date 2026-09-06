@@ -10,10 +10,9 @@ use App\Entity\Ad;
 use App\Entity\Tag;
 use App\Entity\Topic;
 use App\Form\Type\AdType;
-use App\Repository\TopicRepository;
 use App\Security\Voter\AdVoter;
 use App\Service\AdServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\TopicServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -120,18 +119,15 @@ class AdController extends AbstractController
     /**
      * Toggle verification action.
      *
-     * @param Ad                     $ad            Ad entity
-     * @param EntityManagerInterface $entityManager Entity manager
+     * @param Ad $ad Ad entity
      *
      * @return Response HTTP response
      */
     #[Route('/{id}/toggle-verification', name: 'ad_toggle_verification', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function toggleVerification(Ad $ad, EntityManagerInterface $entityManager): Response
+    public function toggleVerification(Ad $ad): Response
     {
-        $ad->setVerified(!$ad->getVerified());
-
-        $entityManager->flush();
+        $this->adService->toggleVerification($ad);
 
         return $this->redirectToRoute('ad_read', [
             'id' => $ad->getId(),
@@ -141,8 +137,8 @@ class AdController extends AbstractController
     /**
      * Create action.
      *
-     * @param Request         $request         HTTP request
-     * @param TopicRepository $topicRepository Topic repository
+     * @param Request               $request      HTTP request
+     * @param TopicServiceInterface $topicService Topic service
      *
      * @return Response HTTP response
      */
@@ -152,10 +148,9 @@ class AdController extends AbstractController
         methods: ['GET', 'POST']
     )]
     #[IsGranted(AdVoter::CREATE)]
-    public function create(Request $request, TopicRepository $topicRepository): Response
+    public function create(Request $request, TopicServiceInterface $topicService): Response
     {
-        $topicCount = $topicRepository->count([]);
-        if (0 === $topicCount) {
+        if (0 === $topicService->count()) {
             $this->addFlash(
                 'warning',
                 $this->translator->trans('message.topic_must_exist_first')
@@ -221,7 +216,6 @@ class AdController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $ad->setVerified(!$ad->getVerified());
             $this->adService->save($ad);
 
             $this->addFlash(
@@ -234,7 +228,8 @@ class AdController extends AbstractController
 
         return $this->render(
             'ads/edit.html.twig',
-            ['form' => $form->createView(),
+            [
+                'form' => $form->createView(),
                 'ad' => $ad,
             ]
         );
